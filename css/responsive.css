@@ -74,6 +74,14 @@
   .contact-widgets {
     grid-template-columns: 1fr;
   }
+
+  .admin-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 600px) {
@@ -91,5 +99,17 @@
 
   .hero-subheadline {
     font-size: 1rem;
+  }
+
+  .admin-main {
+    padding: var(--space-3);
+  }
+
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    grid-template-columns: 1fr;
   }
 }

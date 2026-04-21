@@ -147,6 +147,10 @@
   padding: var(--space-4) 0;
   color: var(--color-muted);
 }
+
+.is-hidden {
+  display: none !important;
+}
 /* Reusable UI components */
 .container {
   width: 100%;

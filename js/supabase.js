@@ -107,6 +107,26 @@
     }
   }
 
+  async function writeData(table, action) {
+    var client = getClient();
+    if (!client) {
+      console.warn("Supabase belum siap untuk tabel:", table);
+      return { data: null, error: "Supabase client belum siap." };
+    }
+
+    try {
+      var response = await action(client);
+      if (response.error) {
+        console.warn("Supabase write error pada tabel:", table, response.error.message);
+        return { data: null, error: response.error.message };
+      }
+      return { data: response.data || null, error: null };
+    } catch (error) {
+      console.warn("Supabase write gagal pada tabel:", table, error);
+      return { data: null, error: error.message };
+    }
+  }
+
   app.supabase = {
     client: null,
     initClient: function () {
@@ -181,6 +201,91 @@
       var response = await selectAll("facility_locations");
       var items = filterByActive(response.data);
       return { data: items, error: response.error };
+    },
+    createHeroSlide: function (data) {
+      return writeData("hero_slides", function (client) {
+        return client.from("hero_slides").insert([data]).select("*");
+      });
+    },
+    updateHeroSlide: function (id, data) {
+      return writeData("hero_slides", function (client) {
+        return client.from("hero_slides").update(data).eq("id", id).select("*");
+      });
+    },
+    deleteHeroSlide: function (id) {
+      return writeData("hero_slides", function (client) {
+        return client.from("hero_slides").delete().eq("id", id).select("*");
+      });
+    },
+    updateSiteProfile: function (id, data) {
+      return writeData("site_profiles", function (client) {
+        return client.from("site_profiles").update(data).eq("id", id).select("*");
+      });
+    },
+    createNewsPost: function (data) {
+      return writeData("news_posts", function (client) {
+        return client.from("news_posts").insert([data]).select("*");
+      });
+    },
+    updateNewsPost: function (id, data) {
+      return writeData("news_posts", function (client) {
+        return client.from("news_posts").update(data).eq("id", id).select("*");
+      });
+    },
+    deleteNewsPost: function (id) {
+      return writeData("news_posts", function (client) {
+        return client.from("news_posts").delete().eq("id", id).select("*");
+      });
+    },
+    createGalleryItem: function (data) {
+      return writeData("gallery_items", function (client) {
+        return client.from("gallery_items").insert([data]).select("*");
+      });
+    },
+    updateGalleryItem: function (id, data) {
+      return writeData("gallery_items", function (client) {
+        return client.from("gallery_items").update(data).eq("id", id).select("*");
+      });
+    },
+    deleteGalleryItem: function (id) {
+      return writeData("gallery_items", function (client) {
+        return client.from("gallery_items").delete().eq("id", id).select("*");
+      });
+    },
+    createPotentialItem: function (data) {
+      return writeData("potential_items", function (client) {
+        return client.from("potential_items").insert([data]).select("*");
+      });
+    },
+    updatePotentialItem: function (id, data) {
+      return writeData("potential_items", function (client) {
+        return client.from("potential_items").update(data).eq("id", id).select("*");
+      });
+    },
+    deletePotentialItem: function (id) {
+      return writeData("potential_items", function (client) {
+        return client.from("potential_items").delete().eq("id", id).select("*");
+      });
+    },
+    updateSiteContact: function (id, data) {
+      return writeData("site_contacts", function (client) {
+        return client.from("site_contacts").update(data).eq("id", id).select("*");
+      });
+    },
+    createSocialLink: function (data) {
+      return writeData("site_social_links", function (client) {
+        return client.from("site_social_links").insert([data]).select("*");
+      });
+    },
+    updateSocialLink: function (id, data) {
+      return writeData("site_social_links", function (client) {
+        return client.from("site_social_links").update(data).eq("id", id).select("*");
+      });
+    },
+    deleteSocialLink: function (id) {
+      return writeData("site_social_links", function (client) {
+        return client.from("site_social_links").delete().eq("id", id).select("*");
+      });
     }
   };
 })(window.DusunJamus = window.DusunJamus || {});
