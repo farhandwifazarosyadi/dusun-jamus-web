@@ -54,6 +54,15 @@
     });
   }
 
+  function slugify(value) {
+    return (value || "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  }
+
   function getClient() {
     if (!app.supabase || typeof app.supabase.initClient !== "function") {
       return null;
@@ -202,49 +211,132 @@
       var items = filterByActive(response.data);
       return { data: items, error: response.error };
     },
-    createHeroSlide: function (data) {
+    getLandingItems: async function () {
+      var client = getClient();
+      if (!client) {
+        return emptyArrayFallback("Supabase client belum siap.");
+      }
+      try {
+        var response = await client
+          .from("hero_slides")
+          .select("id, title, image_url")
+          .order("sort_order", { ascending: true });
+        if (response.error) {
+          return emptyArrayFallback(response.error.message);
+        }
+        return { data: normalizeItems(response.data), error: null };
+      } catch (error) {
+        return emptyArrayFallback(error.message);
+      }
+    },
+    getGalleryItems: async function () {
+      var client = getClient();
+      if (!client) {
+        return emptyArrayFallback("Supabase client belum siap.");
+      }
+      try {
+        var response = await client
+          .from("gallery_items")
+          .select("id, title, image_url")
+          .order("id", { ascending: false });
+        if (response.error) {
+          return emptyArrayFallback(response.error.message);
+        }
+        return { data: normalizeItems(response.data), error: null };
+      } catch (error) {
+        return emptyArrayFallback(error.message);
+      }
+    },
+    getUmkmItems: async function () {
+      var client = getClient();
+      if (!client) {
+        return emptyArrayFallback("Supabase client belum siap.");
+      }
+      try {
+        var response = await client
+          .from("potential_items")
+          .select("id, title, image_url, full_description, slug, type")
+          .eq("type", "umkm")
+          .order("id", { ascending: false });
+        if (response.error) {
+          return emptyArrayFallback(response.error.message);
+        }
+        return { data: normalizeItems(response.data), error: null };
+      } catch (error) {
+        return emptyArrayFallback(error.message);
+      }
+    },
+    getUmkmItemById: async function (id) {
+      var client = getClient();
+      if (!client) {
+        return emptyItemFallback("Supabase client belum siap.");
+      }
+      if (!id) {
+        return emptyItemFallback("ID tidak valid.");
+      }
+      try {
+        var response = await client
+          .from("potential_items")
+          .select("id, title, image_url, full_description, slug, type")
+          .eq("id", id)
+          .eq("type", "umkm")
+          .maybeSingle();
+        if (response.error) {
+          return emptyItemFallback(response.error.message);
+        }
+        return { data: response.data || null, error: null };
+      } catch (error) {
+        return emptyItemFallback(error.message);
+      }
+    },
+    createLandingItem: function (data) {
+      var payload = {
+        title: data.title || "",
+        image_url: data.image_url || "",
+        is_active: true,
+        sort_order: 0
+      };
       return writeData("hero_slides", function (client) {
-        return client.from("hero_slides").insert([data]).select("*");
+        return client.from("hero_slides").insert([payload]).select("*");
       });
     },
-    updateHeroSlide: function (id, data) {
+    updateLandingItem: function (id, data) {
+      var payload = {
+        title: data.title || "",
+        image_url: data.image_url || "",
+        is_active: true,
+        sort_order: 0
+      };
       return writeData("hero_slides", function (client) {
-        return client.from("hero_slides").update(data).eq("id", id).select("*");
+        return client.from("hero_slides").update(payload).eq("id", id).select("*");
       });
     },
-    deleteHeroSlide: function (id) {
+    deleteLandingItem: function (id) {
       return writeData("hero_slides", function (client) {
         return client.from("hero_slides").delete().eq("id", id).select("*");
       });
     },
-    updateSiteProfile: function (id, data) {
-      return writeData("site_profiles", function (client) {
-        return client.from("site_profiles").update(data).eq("id", id).select("*");
-      });
-    },
-    createNewsPost: function (data) {
-      return writeData("news_posts", function (client) {
-        return client.from("news_posts").insert([data]).select("*");
-      });
-    },
-    updateNewsPost: function (id, data) {
-      return writeData("news_posts", function (client) {
-        return client.from("news_posts").update(data).eq("id", id).select("*");
-      });
-    },
-    deleteNewsPost: function (id) {
-      return writeData("news_posts", function (client) {
-        return client.from("news_posts").delete().eq("id", id).select("*");
-      });
-    },
     createGalleryItem: function (data) {
+      var payload = {
+        title: data.title || "",
+        image_url: data.image_url || "",
+        slug: data.slug || slugify(data.title || ""),
+        is_active: true,
+        sort_order: 0
+      };
       return writeData("gallery_items", function (client) {
-        return client.from("gallery_items").insert([data]).select("*");
+        return client.from("gallery_items").insert([payload]).select("*");
       });
     },
     updateGalleryItem: function (id, data) {
+      var payload = {
+        title: data.title || "",
+        image_url: data.image_url || "",
+        slug: data.slug || slugify(data.title || ""),
+        is_active: true
+      };
       return writeData("gallery_items", function (client) {
-        return client.from("gallery_items").update(data).eq("id", id).select("*");
+        return client.from("gallery_items").update(payload).eq("id", id).select("*");
       });
     },
     deleteGalleryItem: function (id) {
@@ -252,39 +344,33 @@
         return client.from("gallery_items").delete().eq("id", id).select("*");
       });
     },
-    createPotentialItem: function (data) {
+    createUmkmItem: function (data) {
+      var payload = {
+        title: data.title || "",
+        image_url: data.image_url || "",
+        type: "umkm",
+        slug: data.slug || slugify(data.title || ""),
+        is_active: true
+      };
       return writeData("potential_items", function (client) {
-        return client.from("potential_items").insert([data]).select("*");
+        return client.from("potential_items").insert([payload]).select("*");
       });
     },
-    updatePotentialItem: function (id, data) {
+    updateUmkmItem: function (id, data) {
+      var payload = {
+        title: data.title || "",
+        image_url: data.image_url || "",
+        full_description: data.full_description || null,
+        type: "umkm",
+        slug: data.slug || slugify(data.title || "")
+      };
       return writeData("potential_items", function (client) {
-        return client.from("potential_items").update(data).eq("id", id).select("*");
+        return client.from("potential_items").update(payload).eq("id", id).select("*");
       });
     },
-    deletePotentialItem: function (id) {
+    deleteUmkmItem: function (id) {
       return writeData("potential_items", function (client) {
         return client.from("potential_items").delete().eq("id", id).select("*");
-      });
-    },
-    updateSiteContact: function (id, data) {
-      return writeData("site_contacts", function (client) {
-        return client.from("site_contacts").update(data).eq("id", id).select("*");
-      });
-    },
-    createSocialLink: function (data) {
-      return writeData("site_social_links", function (client) {
-        return client.from("site_social_links").insert([data]).select("*");
-      });
-    },
-    updateSocialLink: function (id, data) {
-      return writeData("site_social_links", function (client) {
-        return client.from("site_social_links").update(data).eq("id", id).select("*");
-      });
-    },
-    deleteSocialLink: function (id) {
-      return writeData("site_social_links", function (client) {
-        return client.from("site_social_links").delete().eq("id", id).select("*");
       });
     }
   };

@@ -18,7 +18,7 @@
     <header class="admin-header">
       <div class="admin-brand">
         <h1>Dusun Jamus Admin</h1>
-        <p>Dashboard internal untuk mengelola konten</p>
+        <p>Dashboard internal pengelolaan konten</p>
       </div>
       <div class="admin-session">
         <span data-admin-user>Belum login</span>
@@ -27,7 +27,7 @@
     </header>
 
     <main class="admin-main">
-      <section class="admin-auth" data-auth-area>
+      <section class="admin-auth" data-login-section>
         <h2>Login Admin</h2>
         <form class="admin-form" data-login-form>
           <div class="admin-field">
@@ -36,209 +36,74 @@
           </div>
           <div class="admin-field">
             <label for="admin-password">Password</label>
-            <input id="admin-password" name="password" type="password" autocomplete="current-password" required />
+            <input
+              id="admin-password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+            />
           </div>
           <button class="btn btn-primary" type="submit">Masuk</button>
           <p class="admin-status" data-auth-status></p>
         </form>
       </section>
 
-      <section class="admin-denied is-hidden" data-admin-denied>
+      <section class="admin-denied is-hidden" data-access-denied>
         <h2>Akses ditolak</h2>
-        <p>Akun ini belum terdaftar sebagai admin aktif di database.</p>
+        <p data-denied-message>Akun ini bukan admin aktif.</p>
       </section>
 
-      <section class="admin-dashboard is-hidden" data-admin-dashboard>
+      <section class="admin-dashboard is-hidden" data-admin-section>
         <aside class="admin-sidebar" aria-label="Navigasi admin">
-          <button class="admin-nav-btn is-active" type="button" data-admin-nav="hero">Hero</button>
-          <button class="admin-nav-btn" type="button" data-admin-nav="profile">Profil</button>
-          <button class="admin-nav-btn" type="button" data-admin-nav="news">Berita</button>
-          <button class="admin-nav-btn" type="button" data-admin-nav="gallery">Galeri</button>
-          <button class="admin-nav-btn" type="button" data-admin-nav="potentials">Potensi</button>
-          <button class="admin-nav-btn" type="button" data-admin-nav="contacts">Kontak & Social</button>
+          <button class="admin-nav-btn is-active" type="button" data-admin-tab="landing">Landing</button>
+          <button class="admin-nav-btn" type="button" data-admin-tab="gallery">Galeri Desa</button>
+          <button class="admin-nav-btn" type="button" data-admin-tab="umkm">Produk UMKM</button>
+          <button class="admin-nav-btn" type="button" data-admin-tab="umkm-detail">Detail UMKM</button>
         </aside>
 
         <div class="admin-content">
-          <article class="admin-panel is-active" data-admin-panel="hero">
+          <article class="admin-panel is-active" data-admin-panel="landing">
             <header class="admin-panel-header">
-              <h2>Hero / Landing</h2>
-              <p>Kelola slider hero dan landing page.</p>
+              <h2>Landing</h2>
+              <p>Kelola title dan gambar landing.</p>
             </header>
-            <form class="admin-form" data-hero-form>
+            <form class="admin-form" data-landing-form>
               <input type="hidden" name="id" />
               <div class="admin-grid">
                 <div class="admin-field">
                   <label>Title</label>
                   <input name="title" type="text" required />
-                </div>
-                <div class="admin-field">
-                  <label>Subtitle</label>
-                  <input name="subtitle" type="text" />
                 </div>
                 <div class="admin-field admin-field-full">
                   <label>Image URL</label>
-                  <input name="image_url" type="url" />
-                </div>
-                <div class="admin-field">
-                  <label>CTA Label</label>
-                  <input name="cta_label" type="text" />
-                </div>
-                <div class="admin-field">
-                  <label>CTA Target</label>
-                  <input name="cta_target" type="text" placeholder="#profil-preview" />
-                </div>
-                <div class="admin-field">
-                  <label>Sort Order</label>
-                  <input name="sort_order" type="number" min="0" />
-                </div>
-                <div class="admin-field admin-field-inline">
-                  <label>
-                    <input name="is_active" type="checkbox" /> Aktif
-                  </label>
+                  <input name="image_url" type="url" required />
                 </div>
               </div>
               <div class="admin-actions">
-                <button class="btn btn-primary" type="submit" data-hero-submit>Simpan</button>
-                <button class="btn btn-secondary" type="button" data-hero-reset>Reset</button>
+                <button class="btn btn-primary" type="submit" data-landing-submit>Simpan</button>
+                <button class="btn btn-secondary" type="button" data-landing-reset>Reset</button>
               </div>
-              <p class="admin-status" data-hero-status></p>
+              <p class="admin-status" data-landing-status></p>
             </form>
             <div class="admin-table-wrapper">
               <table class="admin-table">
                 <thead>
                   <tr>
                     <th>Title</th>
-                    <th>Subtitle</th>
-                    <th>Order</th>
-                    <th>Aktif</th>
+                    <th>Image URL</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
-                <tbody data-hero-list></tbody>
-              </table>
-            </div>
-          </article>
-
-          <article class="admin-panel" data-admin-panel="profile">
-            <header class="admin-panel-header">
-              <h2>Profil Dusun</h2>
-              <p>Data profil utama yang tampil di website.</p>
-            </header>
-            <form class="admin-form" data-profile-form>
-              <input type="hidden" name="id" />
-              <div class="admin-grid">
-                <div class="admin-field">
-                  <label>Title</label>
-                  <input name="title" type="text" required />
-                </div>
-                <div class="admin-field">
-                  <label>Subtitle</label>
-                  <input name="subtitle" type="text" />
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>Short Description</label>
-                  <textarea name="short_description" rows="2"></textarea>
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>Full Description</label>
-                  <textarea name="full_description" rows="4"></textarea>
-                </div>
-                <div class="admin-field">
-                  <label>Vision</label>
-                  <textarea name="vision" rows="2"></textarea>
-                </div>
-                <div class="admin-field">
-                  <label>Mission</label>
-                  <textarea name="mission" rows="2"></textarea>
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>History</label>
-                  <textarea name="history" rows="3"></textarea>
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>Featured Image URL</label>
-                  <input name="featured_image_url" type="url" />
-                </div>
-                <div class="admin-field admin-field-inline">
-                  <label>
-                    <input name="is_active" type="checkbox" /> Aktif
-                  </label>
-                </div>
-              </div>
-              <div class="admin-actions">
-                <button class="btn btn-primary" type="submit">Simpan Profil</button>
-              </div>
-              <p class="admin-status" data-profile-status></p>
-            </form>
-          </article>
-
-          <article class="admin-panel" data-admin-panel="news">
-            <header class="admin-panel-header">
-              <h2>Berita</h2>
-              <p>Kelola artikel berita.</p>
-            </header>
-            <form class="admin-form" data-news-form>
-              <input type="hidden" name="id" />
-              <div class="admin-grid">
-                <div class="admin-field">
-                  <label>Title</label>
-                  <input name="title" type="text" required />
-                </div>
-                <div class="admin-field">
-                  <label>Slug</label>
-                  <input name="slug" type="text" />
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>Excerpt</label>
-                  <textarea name="excerpt" rows="2"></textarea>
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>Content</label>
-                  <textarea name="content" rows="4"></textarea>
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>Featured Image URL</label>
-                  <input name="featured_image_url" type="url" />
-                </div>
-                <div class="admin-field">
-                  <label>Author Name</label>
-                  <input name="author_name" type="text" />
-                </div>
-                <div class="admin-field">
-                  <label>Published At</label>
-                  <input name="published_at" type="datetime-local" />
-                </div>
-                <div class="admin-field admin-field-inline">
-                  <label>
-                    <input name="is_published" type="checkbox" /> Publish
-                  </label>
-                </div>
-              </div>
-              <div class="admin-actions">
-                <button class="btn btn-primary" type="submit" data-news-submit>Simpan</button>
-                <button class="btn btn-secondary" type="button" data-news-reset>Reset</button>
-              </div>
-              <p class="admin-status" data-news-status></p>
-            </form>
-            <div class="admin-table-wrapper">
-              <table class="admin-table">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Slug</th>
-                    <th>Publish</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody data-news-list></tbody>
+                <tbody data-landing-list></tbody>
               </table>
             </div>
           </article>
 
           <article class="admin-panel" data-admin-panel="gallery">
             <header class="admin-panel-header">
-              <h2>Galeri</h2>
-              <p>Kelola item galeri.</p>
+              <h2>Galeri Desa</h2>
+              <p>Kelola daftar foto galeri.</p>
             </header>
             <form class="admin-form" data-gallery-form>
               <input type="hidden" name="id" />
@@ -247,39 +112,9 @@
                   <label>Title</label>
                   <input name="title" type="text" required />
                 </div>
-                <div class="admin-field">
-                  <label>Slug</label>
-                  <input name="slug" type="text" />
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>Description</label>
-                  <textarea name="description" rows="2"></textarea>
-                </div>
                 <div class="admin-field admin-field-full">
                   <label>Image URL</label>
-                  <input name="image_url" type="url" />
-                </div>
-                <div class="admin-field">
-                  <label>Category</label>
-                  <input name="category" type="text" />
-                </div>
-                <div class="admin-field">
-                  <label>Taken At</label>
-                  <input name="taken_at" type="datetime-local" />
-                </div>
-                <div class="admin-field admin-field-inline">
-                  <label>
-                    <input name="is_featured" type="checkbox" /> Featured
-                  </label>
-                </div>
-                <div class="admin-field">
-                  <label>Sort Order</label>
-                  <input name="sort_order" type="number" min="0" />
-                </div>
-                <div class="admin-field admin-field-inline">
-                  <label>
-                    <input name="is_active" type="checkbox" /> Aktif
-                  </label>
+                  <input name="image_url" type="url" required />
                 </div>
               </div>
               <div class="admin-actions">
@@ -293,8 +128,7 @@
                 <thead>
                   <tr>
                     <th>Title</th>
-                    <th>Category</th>
-                    <th>Aktif</th>
+                    <th>Image URL</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -303,162 +137,74 @@
             </div>
           </article>
 
-          <article class="admin-panel" data-admin-panel="potentials">
+          <article class="admin-panel" data-admin-panel="umkm">
             <header class="admin-panel-header">
-              <h2>Potensi / UMKM</h2>
-              <p>Kelola data potensi dan UMKM.</p>
+              <h2>Produk UMKM</h2>
+              <p>Kelola daftar produk UMKM.</p>
             </header>
-            <form class="admin-form" data-potentials-form>
+            <form class="admin-form" data-umkm-form>
               <input type="hidden" name="id" />
               <div class="admin-grid">
                 <div class="admin-field">
                   <label>Title</label>
                   <input name="title" type="text" required />
                 </div>
-                <div class="admin-field">
-                  <label>Slug</label>
-                  <input name="slug" type="text" />
-                </div>
-                <div class="admin-field">
-                  <label>Type</label>
-                  <input name="type" type="text" />
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>Short Description</label>
-                  <textarea name="short_description" rows="2"></textarea>
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>Full Description</label>
-                  <textarea name="full_description" rows="4"></textarea>
-                </div>
                 <div class="admin-field admin-field-full">
                   <label>Image URL</label>
-                  <input name="image_url" type="url" />
-                </div>
-                <div class="admin-field">
-                  <label>Category</label>
-                  <input name="category" type="text" />
-                </div>
-                <div class="admin-field">
-                  <label>Price Text</label>
-                  <input name="price_text" type="text" />
-                </div>
-                <div class="admin-field">
-                  <label>Contact Text</label>
-                  <input name="contact_text" type="text" />
-                </div>
-                <div class="admin-field">
-                  <label>Location Text</label>
-                  <input name="location_text" type="text" />
-                </div>
-                <div class="admin-field admin-field-inline">
-                  <label>
-                    <input name="is_featured" type="checkbox" /> Featured
-                  </label>
-                </div>
-                <div class="admin-field">
-                  <label>Sort Order</label>
-                  <input name="sort_order" type="number" min="0" />
-                </div>
-                <div class="admin-field admin-field-inline">
-                  <label>
-                    <input name="is_active" type="checkbox" /> Aktif
-                  </label>
+                  <input name="image_url" type="url" required />
                 </div>
               </div>
               <div class="admin-actions">
-                <button class="btn btn-primary" type="submit" data-potentials-submit>Simpan</button>
-                <button class="btn btn-secondary" type="button" data-potentials-reset>Reset</button>
+                <button class="btn btn-primary" type="submit" data-umkm-submit>Simpan</button>
+                <button class="btn btn-secondary" type="button" data-umkm-reset>Reset</button>
               </div>
-              <p class="admin-status" data-potentials-status></p>
+              <p class="admin-status" data-umkm-status></p>
             </form>
             <div class="admin-table-wrapper">
               <table class="admin-table">
                 <thead>
                   <tr>
                     <th>Title</th>
-                    <th>Category</th>
-                    <th>Aktif</th>
+                    <th>Image URL</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
-                <tbody data-potentials-list></tbody>
+                <tbody data-umkm-list></tbody>
               </table>
             </div>
           </article>
 
-          <article class="admin-panel" data-admin-panel="contacts">
+          <article class="admin-panel" data-admin-panel="umkm-detail">
             <header class="admin-panel-header">
-              <h2>Kontak & Social</h2>
-              <p>Perbarui kontak utama dan daftar social links.</p>
+              <h2>Detail UMKM</h2>
+              <p>Perbarui deskripsi detail dari item UMKM yang dipilih.</p>
             </header>
-            <form class="admin-form" data-contact-form>
-              <input type="hidden" name="id" />
+            <form class="admin-form" data-umkm-detail-form>
+              <div class="admin-field admin-field-full">
+                <label>Pilih Produk UMKM</label>
+                <select name="umkm_id" data-umkm-select required>
+                  <option value="">Pilih UMKM</option>
+                </select>
+              </div>
               <div class="admin-grid">
                 <div class="admin-field">
-                  <label>Address</label>
-                  <input name="address" type="text" />
-                </div>
-                <div class="admin-field">
-                  <label>Phone/WA</label>
-                  <input name="phone" type="text" />
-                </div>
-                <div class="admin-field">
-                  <label>Email</label>
-                  <input name="email" type="email" />
+                  <label>Title</label>
+                  <input name="title" type="text" required />
                 </div>
                 <div class="admin-field admin-field-full">
-                  <label>Description</label>
-                  <textarea name="description" rows="2"></textarea>
+                  <label>Image URL</label>
+                  <input name="image_url" type="url" required />
                 </div>
-                <div class="admin-field">
-                  <label>Latitude</label>
-                  <input name="latitude" type="text" />
-                </div>
-                <div class="admin-field">
-                  <label>Longitude</label>
-                  <input name="longitude" type="text" />
+                <div class="admin-field admin-field-full">
+                  <label>Full Description</label>
+                  <textarea name="full_description" rows="4"></textarea>
                 </div>
               </div>
               <div class="admin-actions">
-                <button class="btn btn-primary" type="submit">Simpan Kontak</button>
+                <button class="btn btn-primary" type="submit" data-umkm-detail-submit>Simpan Detail</button>
               </div>
-              <p class="admin-status" data-contact-status></p>
+              <p class="admin-status" data-umkm-detail-status></p>
             </form>
-
-            <div class="admin-divider"></div>
-
-            <form class="admin-form" data-social-form>
-              <input type="hidden" name="id" />
-              <div class="admin-grid">
-                <div class="admin-field">
-                  <label>Label</label>
-                  <input name="label" type="text" required />
-                </div>
-                <div class="admin-field admin-field-full">
-                  <label>URL</label>
-                  <input name="url" type="url" required />
-                </div>
-              </div>
-              <div class="admin-actions">
-                <button class="btn btn-primary" type="submit" data-social-submit>Simpan</button>
-                <button class="btn btn-secondary" type="button" data-social-reset>Reset</button>
-              </div>
-              <p class="admin-status" data-social-status></p>
-            </form>
-
-            <div class="admin-table-wrapper">
-              <table class="admin-table">
-                <thead>
-                  <tr>
-                    <th>Label</th>
-                    <th>URL</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody data-social-list></tbody>
-              </table>
-            </div>
           </article>
         </div>
       </section>
