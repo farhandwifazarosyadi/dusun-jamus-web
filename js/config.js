@@ -14,7 +14,7 @@
 
   app.config = {
     supabaseUrl: "https://kppzjxxgdnqqvrqqpswx.supabase.co",
-    supabaseAnonKey: "YOUR_SUPABASE_ANON_KEY",
+    supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwcHpqeHhnZG5xcXZycXFwc3d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2ODEyMjksImV4cCI6MjA5MjI1NzIyOX0.QZlCKTXuJ6LoCLPty_RTTV_5RtM1CUzyrhlaSbUUukQ",
     googleMapsApiKey: "YOUR_GOOGLE_MAPS_API_KEY",
     openWeatherApiKey: "YOUR_OPENWEATHER_API_KEY",
     normalize: function () {
