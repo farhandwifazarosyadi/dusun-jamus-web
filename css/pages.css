@@ -5,11 +5,29 @@
   display: flex;
   align-items: center;
   color: #f8f1e6;
-  background-image: linear-gradient(135deg, rgba(18, 26, 20, 0.78), rgba(48, 30, 18, 0.72)),
-    url("../assets/images/landing-background.jpg");
-  background-size: cover;
-  background-position: center;
+  background: #1a1a1a url("../assets/images/landing-bg.jpg") center / cover no-repeat;
   overflow: hidden;
+}
+
+.page-home .hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(120deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65));
+  opacity: 1;
+  pointer-events: none;
+}
+
+.page-home .hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06) 2px, transparent 2px, transparent 10px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04) 1px, transparent 1px, transparent 8px);
+  opacity: 0.2;
+  pointer-events: none;
 }
 
 .page-hero {
