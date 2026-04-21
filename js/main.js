@@ -13,6 +13,26 @@
     }
   }
 
+  async function loadAboutPreview() {
+    var target = document.querySelector("[data-about-description]");
+    if (!target) {
+      return;
+    }
+
+    if (!app.supabase || typeof app.supabase.getSiteProfile !== "function") {
+      return;
+    }
+
+    try {
+      var response = await app.supabase.getSiteProfile();
+      if (response && response.data && response.data.short_description) {
+        target.textContent = response.data.short_description;
+      }
+    } catch (error) {
+      console.warn("Tentang desa gagal dimuat:", error);
+    }
+  }
+
   app.main = {
     init: function () {
       try {
@@ -30,6 +50,8 @@
       safeInit(app.maps, "maps");
       safeInit(app.weather, "weather");
       safeInit(app.clock, "clock");
+
+      loadAboutPreview();
     }
   };
 

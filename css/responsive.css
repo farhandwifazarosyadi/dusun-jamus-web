@@ -39,6 +39,10 @@
     grid-template-columns: 1fr;
   }
 
+  .tentang-grid {
+    grid-template-columns: 1fr;
+  }
+
   .gallery-carousel {
     grid-template-columns: 1fr;
   }

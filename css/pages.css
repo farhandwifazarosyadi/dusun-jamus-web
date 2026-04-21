@@ -52,6 +52,49 @@
   background: #d2d0cc;
 }
 
+.tentang-section {
+  background: #d2d0cc;
+}
+
+.tentang-header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto var(--space-4);
+}
+
+.tentang-description {
+  color: #4f463b;
+  font-size: 0.98rem;
+}
+
+.tentang-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.tentang-card {
+  background: #e1e1e1;
+  border-radius: 18px;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+  color: #2c2216;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tentang-card:hover,
+.tentang-card:focus {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
 .about-header {
   text-align: center;
   margin-bottom: var(--space-4);

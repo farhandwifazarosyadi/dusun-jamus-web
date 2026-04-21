@@ -49,7 +49,10 @@
     }
 
     if (isHomePath(window.location.pathname)) {
-      var homeLink = findLinkByHref(links, "#hero") || findLinkByHref(links, "index.html");
+      var homeLink =
+        findLinkByHref(links, "#tentang-desa") ||
+        findLinkByHref(links, "#hero") ||
+        findLinkByHref(links, "index.html");
       if (homeLink) {
         setActiveLink(links, homeLink);
       }
@@ -169,7 +172,10 @@
     }
 
     if (isHomePath(window.location.pathname)) {
-      var homeLink = findLinkByHref(links, "#hero") || findLinkByHref(links, "index.html");
+      var homeLink =
+        findLinkByHref(links, "#tentang-desa") ||
+        findLinkByHref(links, "#hero") ||
+        findLinkByHref(links, "index.html");
       if (homeLink) {
         setActiveLink(links, homeLink);
       }
