@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Potensi Dusun Jamus</title>
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/pages.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="../js/config.js"></script>
+    <script defer src="../js/supabase.js"></script>
+    <script defer src="../js/navigation.js"></script>
+    <script defer src="../js/news.js"></script>
+    <script defer src="../js/gallery.js"></script>
+    <script defer src="../js/potentials.js"></script>
+    <script defer src="../js/maps.js"></script>
+    <script defer src="../js/weather.js"></script>
+    <script defer src="../js/clock.js"></script>
+    <script defer src="../js/main.js"></script>
+  </head>
+  <body class="page page-potensi">
+    <header class="site-header" id="header">
+      <div class="container">
+        <div class="header-inner">
+          <a class="brand" href="../index.html">Dusun Jamus</a>
+          <button
+            class="nav-toggle"
+            type="button"
+            data-nav-toggle
+            aria-expanded="false"
+            aria-controls="site-nav"
+            aria-label="Buka menu"
+          >
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+          </button>
+          <nav class="site-nav" id="site-nav" aria-label="Navigasi utama" data-nav-menu>
+            <ul class="nav-list">
+              <li><a class="nav-link" data-nav-link href="../index.html">Beranda</a></li>
+              <li><a class="nav-link" data-nav-link href="profil.html">Profil</a></li>
+              <li><a class="nav-link" data-nav-link href="potensi.html">Potensi</a></li>
+              <li><a class="nav-link" data-nav-link href="berita.html">Berita</a></li>
+              <li><a class="nav-link" data-nav-link href="galeri.html">Galeri</a></li>
+              <li><a class="nav-link" data-nav-link href="kontak.html">Kontak</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="section detail-section" data-detail-section>
+        <div class="container">
+          <div class="detail-header">
+            <h1 class="section-title">Detail UMKM</h1>
+            <p class="section-subtitle">Informasi lengkap produk dan potensi desa.</p>
+          </div>
+          <div class="detail-layout">
+            <div class="detail-media">
+              <button class="detail-nav" type="button" data-detail-prev aria-label="Sebelumnya">
+                &lt;
+              </button>
+              <div class="detail-image" data-detail-image>
+                <span>Gambar UMKM</span>
+              </div>
+              <button class="detail-nav" type="button" data-detail-next aria-label="Berikutnya">
+                &gt;
+              </button>
+            </div>
+            <article class="detail-card">
+              <h2 class="detail-title" data-detail-title>Nama UMKM</h2>
+              <p class="detail-description" data-detail-description>
+                Deskripsi lengkap UMKM akan ditampilkan di sini.
+              </p>
+              <div class="detail-meta">
+                <p data-detail-price>Harga: -</p>
+                <p data-detail-contact>Kontak: -</p>
+              </div>
+            </article>
+          </div>
+          <p class="detail-status" data-detail-loading>Memuat detail UMKM...</p>
+          <p class="detail-status" data-detail-empty>Data UMKM belum tersedia.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="footer">
+      <div class="container">
+        <p>Footer placeholder - Dusun Jamus</p>
+      </div>
+    </footer>
+  </body>
+</html>

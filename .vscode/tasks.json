@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run local server (http-server)",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"http-server",
+				"-p",
+				"8080",
+				"-c-1"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

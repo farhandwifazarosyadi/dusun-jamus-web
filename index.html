@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dusun Jamus</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/pages.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="js/config.js"></script>
+    <script defer src="js/supabase.js"></script>
+    <script defer src="js/navigation.js"></script>
+    <script defer src="js/news.js"></script>
+    <script defer src="js/gallery.js"></script>
+    <script defer src="js/potentials.js"></script>
+    <script defer src="js/maps.js"></script>
+    <script defer src="js/weather.js"></script>
+    <script defer src="js/clock.js"></script>
+    <script defer src="js/main.js"></script>
+  </head>
+  <body class="page page-home">
+    <header class="site-header" id="header">
+      <div class="container">
+        <div class="header-inner">
+          <a class="brand" href="#hero">Dusun Jamus</a>
+          <button
+            class="nav-toggle"
+            type="button"
+            data-nav-toggle
+            aria-expanded="false"
+            aria-controls="site-nav"
+            aria-label="Buka menu"
+          >
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+          </button>
+          <nav class="site-nav" id="site-nav" aria-label="Navigasi utama" data-nav-menu>
+            <ul class="nav-list">
+              <li><a class="nav-link" data-nav-link href="#hero">Beranda</a></li>
+              <li><a class="nav-link" data-nav-link href="#profil-preview">Profil</a></li>
+              <li><a class="nav-link" data-nav-link href="#potensi-preview">Potensi</a></li>
+              <li><a class="nav-link" data-nav-link href="#berita-preview">Berita</a></li>
+              <li><a class="nav-link" data-nav-link href="#galeri-preview">Galeri</a></li>
+              <li><a class="nav-link" data-nav-link href="#footer">Kontak</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="hero" class="section hero">
+        <div class="container">
+          <div class="hero-content">
+            <p class="hero-eyebrow">Selamat Datang di Website</p>
+            <h1 class="hero-title">Dusun Jamus</h1>
+            <p class="hero-subheadline">Desa yang hangat, hijau, dan penuh karya warga.</p>
+            <p class="hero-description">
+              Jelajahi potensi, kegiatan, dan cerita Dusun Jamus dalam satu tempat.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary hero-cta" href="#profil-preview">Kenali Dusun Jamus</a>
+            </div>
+          </div>
+          <a class="scroll-indicator" href="#profil-preview" aria-label="Scroll ke profil">
+            <span class="scroll-line"></span>
+            <span class="scroll-text">Scroll</span>
+          </a>
+        </div>
+      </section>
+
+      <section id="profil-preview" class="section profil-preview">
+        <div class="container">
+          <h2 class="section-title">Profil Singkat</h2>
+          <p class="section-subtitle">Placeholder untuk ringkasan profil desa.</p>
+        </div>
+      </section>
+
+      <section id="potensi-preview" class="section potensi-preview potentials-section">
+        <div class="container">
+          <div class="potentials-header">
+            <h2 class="section-title">Produk UMKM</h2>
+            <p class="section-subtitle">Potensi dan produk unggulan warga Dusun Jamus.</p>
+          </div>
+          <div class="potentials-grid" data-potentials-grid>
+            <article class="potential-card">
+              <div class="potential-image">UMKM 1</div>
+              <h3 class="potential-title">UMKM 1</h3>
+              <p class="potential-desc">Deskripsi singkat UMKM.</p>
+              <a class="potential-link" href="pages/potensi.html">Detail</a>
+            </article>
+            <article class="potential-card">
+              <div class="potential-image">UMKM 2</div>
+              <h3 class="potential-title">UMKM 2</h3>
+              <p class="potential-desc">Deskripsi singkat UMKM.</p>
+              <a class="potential-link" href="pages/potensi.html">Detail</a>
+            </article>
+            <article class="potential-card">
+              <div class="potential-image">UMKM 3</div>
+              <h3 class="potential-title">UMKM 3</h3>
+              <p class="potential-desc">Deskripsi singkat UMKM.</p>
+              <a class="potential-link" href="pages/potensi.html">Detail</a>
+            </article>
+          </div>
+          <p class="potentials-status" data-potentials-loading>Memuat data UMKM...</p>
+          <p class="potentials-status" data-potentials-empty>Data UMKM belum tersedia.</p>
+        </div>
+      </section>
+
+      <section id="berita-preview" class="section berita-preview">
+        <div class="container">
+          <h2 class="section-title">Berita</h2>
+          <p class="section-subtitle">Placeholder untuk preview berita.</p>
+        </div>
+      </section>
+
+      <section id="galeri-preview" class="section galeri-preview gallery-section">
+        <div class="container">
+          <div class="gallery-header">
+            <h2 class="section-title">Galeri Desa</h2>
+          </div>
+          <div class="gallery-carousel">
+            <button class="gallery-nav" type="button" data-gallery-prev aria-label="Sebelumnya">
+              &lt;
+            </button>
+            <div class="gallery-track" data-gallery-track>
+              <article class="gallery-slide">
+                <div class="gallery-card">Foto Desa</div>
+              </article>
+              <article class="gallery-slide">
+                <div class="gallery-card">Foto Desa</div>
+              </article>
+              <article class="gallery-slide">
+                <div class="gallery-card">Foto Desa</div>
+              </article>
+            </div>
+            <button class="gallery-nav" type="button" data-gallery-next aria-label="Berikutnya">
+              &gt;
+            </button>
+          </div>
+          <p class="gallery-fallback" data-gallery-fallback>Galeri belum tersedia.</p>
+          <div class="gallery-umkm">
+            <h3 class="gallery-subtitle">UMKM</h3>
+            <div class="umkm-grid">
+              <div class="umkm-card">UMKM 1</div>
+              <div class="umkm-card">UMKM 2</div>
+              <div class="umkm-card">UMKM 3</div>
+            </div>
+            <a class="btn btn-secondary gallery-cta" href="pages/galeri.html">Selengkapnya</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="info-panel" class="section info-panel">
+        <div class="container">
+          <h2 class="section-title">Info Panel</h2>
+          <div class="info-grid">
+            <div class="info-card" id="weather-panel" data-weather-panel>
+              <h3>Cuaca</h3>
+              <p>Placeholder untuk cuaca.</p>
+            </div>
+            <div class="info-card" id="clock-panel">
+              <h3>Jam</h3>
+              <p>Placeholder untuk jam realtime.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="map-preview" class="section map-preview">
+        <div class="container">
+          <h2 class="section-title">Peta</h2>
+          <div class="map-placeholder" data-map-placeholder>Placeholder untuk peta.</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="footer">
+      <div class="container">
+        <p>Footer placeholder - Dusun Jamus</p>
+      </div>
+    </footer>
+  </body>
+</html>
