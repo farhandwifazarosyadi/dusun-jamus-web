@@ -1,35 +1,15 @@
 /* Page-specific layout adjustments */
 .page-home .hero {
   position: relative;
-  min-height: 72vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   color: #f8f1e6;
-  background: linear-gradient(135deg, rgba(18, 26, 20, 0.9), rgba(48, 30, 18, 0.88));
+  background-image: linear-gradient(135deg, rgba(18, 26, 20, 0.78), rgba(48, 30, 18, 0.72)),
+    url("../assets/images/landing-background.jpg");
+  background-size: cover;
+  background-position: center;
   overflow: hidden;
-}
-
-.page-home .hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 10% 20%, rgba(255, 220, 180, 0.2), transparent 50%),
-    radial-gradient(circle at 90% 30%, rgba(120, 200, 160, 0.18), transparent 45%),
-    linear-gradient(120deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.55));
-  opacity: 0.9;
-  pointer-events: none;
-}
-
-.page-home .hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06) 2px, transparent 2px, transparent 10px),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04) 1px, transparent 1px, transparent 8px);
-  opacity: 0.2;
-  pointer-events: none;
 }
 
 .page-hero {
