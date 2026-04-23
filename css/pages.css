@@ -108,13 +108,7 @@
   box-shadow: var(--shadow-sm);
   font-weight: 600;
   color: var(--color-text);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.tentang-card:hover,
-.tentang-card:focus {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  cursor: default;
 }
 
 .about-header {
@@ -219,7 +213,7 @@
 .gallery-slide {
   scroll-snap-align: center;
   min-width: 200px;
-  flex: 0 0 calc((100% - (var(--space-3) * 3)) / 4);
+  flex: 0 0 calc((100% - (var(--space-3) * 4)) / 5);
 }
 
 .gallery-card {
@@ -354,6 +348,15 @@
 .detail-section {
   background: var(--color-primary);
   color: var(--color-text-light);
+}
+
+.detail-page {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.detail-page .detail-status {
+  color: var(--color-muted);
 }
 
 .detail-header {

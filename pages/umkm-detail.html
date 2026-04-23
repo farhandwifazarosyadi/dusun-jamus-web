@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Galeri Desa Jamus</title>
+    <title>Detail UMKM Dusun Jamus</title>
     <link rel="stylesheet" href="../css/base.css" />
     <link rel="stylesheet" href="../css/components.css" />
     <link rel="stylesheet" href="../css/pages.css" />
@@ -12,10 +12,10 @@
     <script defer src="../js/config.js"></script>
     <script defer src="../js/supabase.js"></script>
     <script defer src="../js/navigation.js"></script>
-    <script defer src="../js/gallery.js"></script>
+    <script defer src="../js/potentials.js"></script>
     <script defer src="../js/main.js"></script>
   </head>
-  <body class="page page-galeri">
+  <body class="page page-umkm-detail">
     <header class="site-header" id="header">
       <div class="container">
         <div class="header-inner">
@@ -34,7 +34,6 @@
           </button>
           <nav class="site-nav" id="site-nav" aria-label="Navigasi utama" data-nav-menu>
             <ul class="nav-list">
-              <li><a class="nav-link" data-nav-link href="../index.html">Beranda</a></li>
               <li><a class="nav-link" data-nav-link href="../index.html#tentang-desa">Tentang Desa</a></li>
               <li><a class="nav-link" data-nav-link href="../index.html#galeri-desa">Galeri Desa</a></li>
               <li><a class="nav-link" data-nav-link href="../index.html#umkm">UMKM</a></li>
@@ -48,42 +47,28 @@
     <main>
       <section class="section page-hero">
         <div class="container">
-          <h1 class="section-title">Galeri Desa</h1>
-          <p class="section-subtitle">Dokumentasi aktivitas dan suasana Dusun Jamus.</p>
+          <h1 class="section-title">Detail UMKM</h1>
+          <p class="section-subtitle">Informasi lengkap produk UMKM Dusun Jamus.</p>
         </div>
       </section>
 
-      <section class="section gallery-section">
+      <section class="section detail-section detail-page" data-umkm-detail>
         <div class="container">
-          <div class="gallery-header">
-            <h2 class="section-title">Galeri Desa</h2>
-          </div>
-          <div class="gallery-carousel">
-            <button class="gallery-nav" type="button" data-gallery-prev aria-label="Sebelumnya">
-              &lt;
-            </button>
-            <div class="gallery-track" data-gallery-track>
-              <article class="gallery-slide">
-                <div class="gallery-card">Foto Desa</div>
-              </article>
-              <article class="gallery-slide">
-                <div class="gallery-card">Foto Desa</div>
-              </article>
-              <article class="gallery-slide">
-                <div class="gallery-card">Foto Desa</div>
-              </article>
-              <article class="gallery-slide">
-                <div class="gallery-card">Foto Desa</div>
-              </article>
-              <article class="gallery-slide">
-                <div class="gallery-card">Foto Desa</div>
-              </article>
+          <div class="detail-layout">
+            <div class="detail-media">
+              <div class="detail-image" data-detail-image>
+                <span>Gambar UMKM</span>
+              </div>
             </div>
-            <button class="gallery-nav" type="button" data-gallery-next aria-label="Berikutnya">
-              &gt;
-            </button>
+            <article class="detail-card">
+              <h2 class="detail-title" data-detail-title>Nama UMKM</h2>
+              <p class="detail-description" data-detail-description>
+                Deskripsi lengkap UMKM akan ditampilkan di sini.
+              </p>
+            </article>
           </div>
-          <p class="gallery-fallback" data-gallery-fallback>Galeri belum tersedia.</p>
+          <p class="detail-status" data-detail-loading>Memuat detail UMKM...</p>
+          <p class="detail-status" data-detail-empty>Data UMKM belum tersedia.</p>
         </div>
       </section>
     </main>

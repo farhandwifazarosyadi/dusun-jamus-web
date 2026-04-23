@@ -22,6 +22,30 @@
     element.classList.toggle("is-hidden", !visible);
   }
 
+  function slugify(value) {
+    return (value || "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  }
+
+  function buildDetailUrl(item) {
+    var slug = pickValue(item, ["slug"], "");
+    var id = pickValue(item, ["id"], "");
+    if (!slug) {
+      slug = slugify(pickValue(item, ["title", "name"], ""));
+    }
+    if (slug) {
+      return "pages/umkm-detail.html?slug=" + encodeURIComponent(slug);
+    }
+    if (id) {
+      return "pages/umkm-detail.html?id=" + encodeURIComponent(id);
+    }
+    return "pages/umkm-detail.html";
+  }
+
   function createCard(item) {
     return createCardWithDetail(item, -1, false);
   }
@@ -50,7 +74,7 @@
 
     var title = document.createElement("h3");
     title.className = "potential-title";
-    title.textContent = pickValue(item, ["title", "name"], "Produk UMKM");
+    title.textContent = pickValue(item, ["title", "name"], "UMKM");
 
     var desc = document.createElement("p");
     desc.className = "potential-desc";
@@ -58,12 +82,7 @@
 
     var link = document.createElement("a");
     link.className = "potential-link";
-    if (useDetailSection && index >= 0) {
-      link.href = "#detail-umkm";
-      link.setAttribute("data-detail-index", String(index));
-    } else {
-      link.href = "pages/potensi.html";
-    }
+    link.href = buildDetailUrl(item);
     link.textContent = "Detail UMKM";
 
     card.appendChild(image);
@@ -86,35 +105,25 @@
     setStatusVisibility(section.querySelector("[data-detail-empty]"), emptyVisible);
   }
 
-  function renderDetail(section, items, index) {
-    if (!section || !items.length) {
+  function renderDetailItem(section, item) {
+    if (!section || !item) {
       setDetailStatus(section, false, true);
       return;
     }
 
-    var safeIndex = index;
-    if (safeIndex < 0 || safeIndex >= items.length) {
-      safeIndex = 0;
-    }
-
-    var item = items[safeIndex];
     var title = section.querySelector("[data-detail-title]");
     var description = section.querySelector("[data-detail-description]");
-    var price = section.querySelector("[data-detail-price]");
-    var contact = section.querySelector("[data-detail-contact]");
     var image = section.querySelector("[data-detail-image]");
 
     if (title) {
       title.textContent = pickValue(item, ["title", "name"], "Nama UMKM");
     }
     if (description) {
-      description.textContent = pickValue(item, ["description", "summary", "ringkasan"], "Deskripsi lengkap UMKM.");
-    }
-    if (price) {
-      price.textContent = "Harga: " + pickValue(item, ["price", "harga"], "-");
-    }
-    if (contact) {
-      contact.textContent = "Kontak: " + pickValue(item, ["contact", "kontak", "phone", "telepon"], "-");
+      description.textContent = pickValue(
+        item,
+        ["full_description", "description", "summary", "ringkasan"],
+        "Deskripsi lengkap UMKM."
+      );
     }
 
     if (image) {
@@ -131,6 +140,50 @@
     }
 
     setDetailStatus(section, false, false);
+  }
+
+  function getQueryParams() {
+    return new URLSearchParams(window.location.search || "");
+  }
+
+  async function loadDetailPage(section) {
+    if (!section) {
+      return;
+    }
+
+    setDetailStatus(section, true, false);
+    var params = getQueryParams();
+    var slug = params.get("slug") || "";
+    var id = params.get("id") || "";
+
+    if (!app.supabase) {
+      setDetailStatus(section, false, true);
+      return;
+    }
+
+    try {
+      var response = null;
+      if (slug) {
+        response = await app.supabase.getPotentialBySlug(slug);
+      } else if (id) {
+        response = await app.supabase.getUmkmItemById(id);
+      }
+
+      if (!response || response.error || !response.data) {
+        setDetailStatus(section, false, true);
+        return;
+      }
+
+      if (normalizeType(response.data) !== "umkm") {
+        setDetailStatus(section, false, true);
+        return;
+      }
+
+      renderDetailItem(section, response.data);
+    } catch (error) {
+      console.warn("Detail UMKM gagal dimuat.", error);
+      setDetailStatus(section, false, true);
+    }
   }
 
   async function fetchPotentialItems() {
@@ -157,6 +210,15 @@
   app.potentials = {
     init: async function () {
       var section = document.querySelector(".potentials-section");
+      var detailSection = document.querySelector("[data-umkm-detail]");
+      if (!section && !detailSection) {
+        return;
+      }
+
+      if (detailSection) {
+        await loadDetailPage(detailSection);
+      }
+
       if (!section) {
         return;
       }
@@ -186,62 +248,10 @@
         return;
       }
 
-      var detailSection = document.querySelector("[data-detail-section]");
-      var useDetailSection = Boolean(detailSection);
-
       grid.innerHTML = "";
       items.slice(0, 6).forEach(function (item, index) {
-        grid.appendChild(createCardWithDetail(item, index, useDetailSection));
+        grid.appendChild(createCardWithDetail(item, index, false));
       });
-
-      if (useDetailSection) {
-        var currentIndex = 0;
-        var prevButton = detailSection.querySelector("[data-detail-prev]");
-        var nextButton = detailSection.querySelector("[data-detail-next]");
-
-        var selectIndex = function (nextIndex) {
-          currentIndex = nextIndex;
-          renderDetail(detailSection, items, currentIndex);
-        };
-
-        if (prevButton) {
-          prevButton.addEventListener("click", function () {
-            var next = currentIndex - 1;
-            if (next < 0) {
-              next = items.length - 1;
-            }
-            selectIndex(next);
-          });
-        }
-
-        if (nextButton) {
-          nextButton.addEventListener("click", function () {
-            var next = currentIndex + 1;
-            if (next >= items.length) {
-              next = 0;
-            }
-            selectIndex(next);
-          });
-        }
-
-        grid.addEventListener("click", function (event) {
-          var link = event.target.closest("[data-detail-index]");
-          if (!link) {
-            return;
-          }
-          var nextIndex = parseInt(link.getAttribute("data-detail-index"), 10);
-          if (isNaN(nextIndex)) {
-            return;
-          }
-          event.preventDefault();
-          detailSection.classList.remove("is-hidden");
-          setDetailStatus(detailSection, true, false);
-          selectIndex(nextIndex);
-          if (detailSection && typeof detailSection.scrollIntoView === "function") {
-            detailSection.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        });
-      }
     }
   };
 })(window.DusunJamus = window.DusunJamus || {});
