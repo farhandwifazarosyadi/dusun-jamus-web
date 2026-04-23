@@ -64,7 +64,7 @@
     } else {
       link.href = "pages/potensi.html";
     }
-    link.textContent = "Detail";
+    link.textContent = "Detail UMKM";
 
     card.appendChild(image);
     card.appendChild(title);
@@ -195,7 +195,6 @@
       });
 
       if (useDetailSection) {
-        setDetailStatus(detailSection, true, false);
         var currentIndex = 0;
         var prevButton = detailSection.querySelector("[data-detail-prev]");
         var nextButton = detailSection.querySelector("[data-detail-next]");
@@ -235,13 +234,13 @@
             return;
           }
           event.preventDefault();
+          detailSection.classList.remove("is-hidden");
+          setDetailStatus(detailSection, true, false);
           selectIndex(nextIndex);
           if (detailSection && typeof detailSection.scrollIntoView === "function") {
             detailSection.scrollIntoView({ behavior: "smooth", block: "start" });
           }
         });
-
-        renderDetail(detailSection, items, currentIndex);
       }
     }
   };
