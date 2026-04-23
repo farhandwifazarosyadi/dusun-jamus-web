@@ -1,12 +1,16 @@
 /* Base styles and design tokens */
 :root {
-  --color-primary: #2f6b4f;
-  --color-secondary: #c08a5b;
-  --color-bg: #f6f2e9;
-  --color-surface: #ffffff;
-  --color-text: #1f1b16;
-  --color-muted: #6f6256;
-  --color-border: #e2d9cc;
+  --color-primary: #6c5433;
+  --color-secondary: #bfae96;
+  --color-background: #d9d9d9;
+  --color-bg: var(--color-background);
+  --color-surface: #d9d9d9;
+  --color-text: #2b2116;
+  --color-text-light: #f7f2ea;
+  --color-muted: #6b5a45;
+  --color-border: #bfae96;
+  --color-button-primary: #6c5433;
+  --color-button-primary-hover: #5a4428;
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
@@ -38,7 +42,7 @@ html {
 body {
   font-family: var(--font-body);
   background: var(--color-bg);
-  background-image: radial-gradient(circle at top, #fff8ee 0%, var(--color-bg) 55%);
+  background-image: radial-gradient(circle at top, #efe6da 0%, var(--color-bg) 55%);
   color: var(--color-text);
   line-height: 1.65;
   min-height: 100vh;
@@ -96,18 +100,22 @@ h3 {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-secondary);
+  outline: 2px solid var(--color-primary);
   outline-offset: 3px;
 }
 /* Base styles and design tokens */
 :root {
-  --color-primary: #2f6b4f;
-  --color-secondary: #c08a5b;
-  --color-bg: #f6f2e9;
-  --color-surface: #ffffff;
-  --color-text: #1f1b16;
-  --color-muted: #6f6256;
-  --color-border: #e2d9cc;
+  --color-primary: #6c5433;
+  --color-secondary: #bfae96;
+  --color-background: #d9d9d9;
+  --color-bg: var(--color-background);
+  --color-surface: #d9d9d9;
+  --color-text: #2b2116;
+  --color-text-light: #f7f2ea;
+  --color-muted: #6b5a45;
+  --color-border: #bfae96;
+  --color-button-primary: #6c5433;
+  --color-button-primary-hover: #5a4428;
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
@@ -139,7 +147,7 @@ html {
 body {
   font-family: var(--font-body);
   background: var(--color-bg);
-  background-image: radial-gradient(circle at top, #fff8ee 0%, var(--color-bg) 55%);
+  background-image: radial-gradient(circle at top, #efe6da 0%, var(--color-bg) 55%);
   color: var(--color-text);
   line-height: 1.65;
   min-height: 100vh;
@@ -197,6 +205,6 @@ h3 {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-secondary);
+  outline: 2px solid var(--color-primary);
   outline-offset: 3px;
 }

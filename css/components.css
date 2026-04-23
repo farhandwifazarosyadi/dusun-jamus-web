@@ -13,6 +13,7 @@
 .section-title {
   font-size: 2rem;
   margin-bottom: var(--space-2);
+  color: var(--color-primary);
 }
 
 .section-subtitle {
@@ -31,12 +32,13 @@
 }
 
 .btn-primary {
-  background: var(--color-primary);
-  color: #ffffff;
+  background: var(--color-button-primary);
+  color: var(--color-text-light);
   box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
+  background: var(--color-button-primary-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
@@ -44,7 +46,7 @@
 .btn-secondary {
   border: 1px solid var(--color-primary);
   color: var(--color-primary);
-  background: transparent;
+  background: var(--color-surface);
 }
 
 .card,
@@ -57,8 +59,8 @@
 }
 
 .site-header {
-  background: rgba(255, 255, 255, 0.9);
-  border-bottom: 1px solid var(--color-border);
+  background: var(--color-primary);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -76,7 +78,7 @@
 .brand {
   font-family: var(--font-heading);
   font-size: 1.4rem;
-  color: var(--color-primary);
+  color: var(--color-text-light);
 }
 
 .site-nav {
@@ -93,19 +95,19 @@
 .nav-link {
   padding: 6px 0;
   border-bottom: 2px solid transparent;
-  color: var(--color-text);
+  color: var(--color-text-light);
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .nav-link:hover,
 .nav-link:focus {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: var(--color-text-light);
+  color: var(--color-text-light);
 }
 
 .nav-link.is-active {
-  border-color: var(--color-secondary);
-  color: var(--color-primary);
+  border-color: var(--color-surface);
+  color: var(--color-text-light);
 }
 
 .nav-toggle {
@@ -114,14 +116,14 @@
   gap: 4px;
   padding: 8px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: transparent;
 }
 
 .nav-toggle-line {
   width: 22px;
   height: 2px;
-  background: var(--color-text);
+  background: var(--color-text-light);
   display: block;
 }
 
@@ -142,10 +144,10 @@
 }
 
 .site-footer {
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
+  background: var(--color-primary);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
   padding: var(--space-4) 0;
-  color: var(--color-muted);
+  color: var(--color-text-light);
 }
 
 .is-hidden {
@@ -166,6 +168,7 @@
 .section-title {
   font-size: 2rem;
   margin-bottom: var(--space-2);
+  color: var(--color-primary);
 }
 
 .section-subtitle {
@@ -184,12 +187,13 @@
 }
 
 .btn-primary {
-  background: var(--color-primary);
-  color: #ffffff;
+  background: var(--color-button-primary);
+  color: var(--color-text-light);
   box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
+  background: var(--color-button-primary-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
@@ -197,7 +201,7 @@
 .btn-secondary {
   border: 1px solid var(--color-primary);
   color: var(--color-primary);
-  background: transparent;
+  background: var(--color-surface);
 }
 
 .card,
@@ -210,8 +214,8 @@
 }
 
 .site-header {
-  background: rgba(255, 255, 255, 0.9);
-  border-bottom: 1px solid var(--color-border);
+  background: var(--color-primary);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -229,7 +233,7 @@
 .brand {
   font-family: var(--font-heading);
   font-size: 1.4rem;
-  color: var(--color-primary);
+  color: var(--color-text-light);
 }
 
 .site-nav {
@@ -246,19 +250,19 @@
 .nav-link {
   padding: 6px 0;
   border-bottom: 2px solid transparent;
-  color: var(--color-text);
+  color: var(--color-text-light);
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .nav-link:hover,
 .nav-link:focus {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: var(--color-text-light);
+  color: var(--color-text-light);
 }
 
 .nav-link.is-active {
-  border-color: var(--color-secondary);
-  color: var(--color-primary);
+  border-color: var(--color-surface);
+  color: var(--color-text-light);
 }
 
 .nav-toggle {
@@ -267,14 +271,14 @@
   gap: 4px;
   padding: 8px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: transparent;
 }
 
 .nav-toggle-line {
   width: 22px;
   height: 2px;
-  background: var(--color-text);
+  background: var(--color-text-light);
   display: block;
 }
 
@@ -295,8 +299,8 @@
 }
 
 .site-footer {
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
+  background: var(--color-primary);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
   padding: var(--space-4) 0;
-  color: var(--color-muted);
+  color: var(--color-text-light);
 }
