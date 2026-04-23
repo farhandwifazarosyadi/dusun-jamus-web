@@ -3,7 +3,7 @@
   "use strict";
 
   function updateMapPlaceholder(text) {
-    var container = document.querySelector("#map-preview .map-placeholder");
+    var container = document.querySelector("[data-contact-map]");
     if (!container) {
       return;
     }

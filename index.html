@@ -12,7 +12,6 @@
     <script defer src="js/config.js"></script>
     <script defer src="js/supabase.js"></script>
     <script defer src="js/navigation.js"></script>
-    <script defer src="js/news.js"></script>
     <script defer src="js/gallery.js"></script>
     <script defer src="js/potentials.js"></script>
     <script defer src="js/maps.js"></script>
@@ -61,16 +60,17 @@
             <nav class="site-nav" id="site-nav" aria-label="Navigasi utama" data-nav-menu>
               <ul class="nav-list">
                 <li><a class="nav-link" data-nav-link href="#tentang-desa">Tentang Desa</a></li>
-                <li><a class="nav-link" data-nav-link href="#galeri-preview">Galeri Desa</a></li>
-                <li><a class="nav-link" data-nav-link href="#potensi-preview">UMKM</a></li>
-                <li><a class="nav-link" data-nav-link href="#footer">Kontak</a></li>
+                <li><a class="nav-link" data-nav-link href="#galeri-desa">Galeri Desa</a></li>
+                <li><a class="nav-link" data-nav-link href="#produk-umkm">Produk UMKM</a></li>
+                <li><a class="nav-link" data-nav-link href="#detail-umkm">Detail UMKM</a></li>
+                <li><a class="nav-link" data-nav-link href="#kontak">Kontak</a></li>
               </ul>
             </nav>
           </div>
         </div>
       </header>
 
-      <section id="tentang-desa" class="section tentang-section">
+      <section id="tentang-desa" class="section tentang-section main-section">
         <div class="container">
           <div class="tentang-header">
             <h2 class="section-title">Tentang Desa Jamus</h2>
@@ -87,48 +87,16 @@
               <span>Potensi Desa</span>
             </a>
           </div>
-        </div>
-      </section>
-
-      <section id="potensi-preview" class="section potensi-preview potentials-section">
-        <div class="container">
-          <div class="potentials-header">
-            <h2 class="section-title">Produk UMKM</h2>
-            <p class="section-subtitle">Potensi dan produk unggulan warga Dusun Jamus.</p>
+          <div class="tentang-weather">
+            <div class="info-card weather-card" id="weather-panel" data-weather-panel>
+              <h3>Cuaca</h3>
+              <p>Data cuaca belum tersedia.</p>
+            </div>
           </div>
-          <div class="potentials-grid" data-potentials-grid>
-            <article class="potential-card">
-              <div class="potential-image">UMKM 1</div>
-              <h3 class="potential-title">UMKM 1</h3>
-              <p class="potential-desc">Deskripsi singkat UMKM.</p>
-              <a class="potential-link" href="pages/potensi.html">Detail</a>
-            </article>
-            <article class="potential-card">
-              <div class="potential-image">UMKM 2</div>
-              <h3 class="potential-title">UMKM 2</h3>
-              <p class="potential-desc">Deskripsi singkat UMKM.</p>
-              <a class="potential-link" href="pages/potensi.html">Detail</a>
-            </article>
-            <article class="potential-card">
-              <div class="potential-image">UMKM 3</div>
-              <h3 class="potential-title">UMKM 3</h3>
-              <p class="potential-desc">Deskripsi singkat UMKM.</p>
-              <a class="potential-link" href="pages/potensi.html">Detail</a>
-            </article>
-          </div>
-          <p class="potentials-status" data-potentials-loading>Memuat data UMKM...</p>
-          <p class="potentials-status" data-potentials-empty>Data UMKM belum tersedia.</p>
         </div>
       </section>
 
-      <section id="berita-preview" class="section berita-preview">
-        <div class="container">
-          <h2 class="section-title">Berita</h2>
-          <p class="section-subtitle">Placeholder untuk preview berita.</p>
-        </div>
-      </section>
-
-      <section id="galeri-preview" class="section galeri-preview gallery-section">
+      <section id="galeri-desa" class="section galeri-preview gallery-section main-section">
         <div class="container">
           <div class="gallery-header">
             <h2 class="section-title">Galeri Desa</h2>
@@ -165,26 +133,103 @@
         </div>
       </section>
 
-      <section id="info-panel" class="section info-panel">
+      <section id="produk-umkm" class="section potensi-preview potentials-section main-section">
         <div class="container">
-          <h2 class="section-title">Info Panel</h2>
-          <div class="info-grid">
-            <div class="info-card" id="weather-panel" data-weather-panel>
-              <h3>Cuaca</h3>
-              <p>Placeholder untuk cuaca.</p>
-            </div>
-            <div class="info-card" id="clock-panel">
-              <h3>Jam</h3>
-              <p>Placeholder untuk jam realtime.</p>
-            </div>
+          <div class="potentials-header">
+            <h2 class="section-title">Produk UMKM</h2>
+            <p class="section-subtitle">Potensi dan produk unggulan warga Dusun Jamus.</p>
           </div>
+          <div class="potentials-grid" data-potentials-grid>
+            <article class="potential-card">
+              <div class="potential-image">UMKM 1</div>
+              <h3 class="potential-title">UMKM 1</h3>
+              <p class="potential-desc">Deskripsi singkat UMKM.</p>
+              <a class="potential-link" href="pages/potensi.html">Detail</a>
+            </article>
+            <article class="potential-card">
+              <div class="potential-image">UMKM 2</div>
+              <h3 class="potential-title">UMKM 2</h3>
+              <p class="potential-desc">Deskripsi singkat UMKM.</p>
+              <a class="potential-link" href="pages/potensi.html">Detail</a>
+            </article>
+            <article class="potential-card">
+              <div class="potential-image">UMKM 3</div>
+              <h3 class="potential-title">UMKM 3</h3>
+              <p class="potential-desc">Deskripsi singkat UMKM.</p>
+              <a class="potential-link" href="pages/potensi.html">Detail</a>
+            </article>
+          </div>
+          <p class="potentials-status" data-potentials-loading>Memuat data UMKM...</p>
+          <p class="potentials-status" data-potentials-empty>Data UMKM belum tersedia.</p>
         </div>
       </section>
 
-      <section id="map-preview" class="section map-preview">
+      <section id="detail-umkm" class="section detail-section main-section" data-detail-section>
         <div class="container">
-          <h2 class="section-title">Peta</h2>
-          <div class="map-placeholder" data-map-placeholder>Placeholder untuk peta.</div>
+          <div class="detail-header">
+            <h2 class="section-title">Detail UMKM</h2>
+            <p class="section-subtitle">Informasi lengkap produk dan potensi desa.</p>
+          </div>
+          <div class="detail-layout">
+            <div class="detail-media">
+              <button class="detail-nav" type="button" data-detail-prev aria-label="Sebelumnya">
+                &lt;
+              </button>
+              <div class="detail-image" data-detail-image>
+                <span>Gambar UMKM</span>
+              </div>
+              <button class="detail-nav" type="button" data-detail-next aria-label="Berikutnya">
+                &gt;
+              </button>
+            </div>
+            <article class="detail-card">
+              <h2 class="detail-title" data-detail-title>Nama UMKM</h2>
+              <p class="detail-description" data-detail-description>
+                Deskripsi lengkap UMKM akan ditampilkan di sini.
+              </p>
+              <div class="detail-meta">
+                <p data-detail-price>Harga: -</p>
+                <p data-detail-contact>Kontak: -</p>
+              </div>
+            </article>
+          </div>
+          <p class="detail-status" data-detail-loading>Memuat detail UMKM...</p>
+          <p class="detail-status" data-detail-empty>Data UMKM belum tersedia.</p>
+        </div>
+      </section>
+
+      <section id="kontak" class="section contact-section main-section" data-contact-section>
+        <div class="container">
+          <div class="contact-layout">
+            <div class="contact-map">
+              <h2 class="section-title">Kontak</h2>
+              <p class="section-subtitle">Temukan lokasi dan hubungi Dusun Jamus.</p>
+              <div class="map-frame" data-contact-map>
+                <p>Lokasi: Dusun Jamus. Peta belum tersedia.</p>
+              </div>
+            </div>
+            <div class="contact-card">
+              <p class="contact-desc" data-contact-description>
+                Informasi kontak Dusun Jamus.
+              </p>
+              <div class="contact-info">
+                <p data-contact-address>Alamat: -</p>
+                <p data-contact-phone>Telepon/WA: -</p>
+                <p data-contact-email>Email: -</p>
+              </div>
+              <div class="contact-socials" data-contact-socials>
+                <h3>Media Sosial</h3>
+                <ul></ul>
+              </div>
+              <div class="contact-widgets">
+                <div class="widget" id="clock-panel">
+                  <h3>Jam</h3>
+                  <p data-clock-time>--:--</p>
+                </div>
+              </div>
+              <p class="contact-status" data-contact-status>Memuat data kontak...</p>
+            </div>
+          </div>
         </div>
       </section>
     </main>

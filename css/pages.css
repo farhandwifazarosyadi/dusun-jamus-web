@@ -38,6 +38,16 @@
   padding-top: 0;
 }
 
+.page-home .main-section {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+}
+
+.page-home .main-section .container {
+  width: 100%;
+}
+
 .profil-preview,
 .potensi-preview,
 .berita-preview,
@@ -72,6 +82,17 @@
   gap: var(--space-4);
   max-width: 720px;
   margin: 0 auto;
+}
+
+.tentang-weather {
+  margin-top: var(--space-4);
+  display: flex;
+  justify-content: center;
+}
+
+.weather-card {
+  width: min(520px, 100%);
+  text-align: center;
 }
 
 .tentang-card {

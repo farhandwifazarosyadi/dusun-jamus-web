@@ -1,5 +1,9 @@
 /* Responsive adjustments */
 @media (max-width: 900px) {
+  .page-home .main-section {
+    min-height: auto;
+  }
+
   .header-inner {
     align-items: flex-start;
   }
@@ -41,6 +45,10 @@
 
   .tentang-grid {
     grid-template-columns: 1fr;
+  }
+
+  .tentang-weather {
+    margin-top: var(--space-3);
   }
 
   .gallery-carousel {
