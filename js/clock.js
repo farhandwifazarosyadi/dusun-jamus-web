@@ -6,25 +6,41 @@
     if (!date) {
       return "";
     }
-    return date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+    return date.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+  }
+
+  function formatDate(date) {
+    if (!date) {
+      return "";
+    }
+    return date.toLocaleDateString("id-ID", {
+      weekday: "long",
+      day: "2-digit",
+      month: "long",
+      year: "numeric"
+    });
   }
 
   function updateClock() {
-    var time = formatTime(new Date());
-    var homePanel = document.querySelector("#clock-panel p");
-    if (homePanel) {
-      homePanel.textContent = time;
-    }
-    var contactClock = document.querySelector("[data-clock-time]");
-    if (contactClock) {
-      contactClock.textContent = time;
-    }
+    var now = new Date();
+    var time = formatTime(now);
+    var dateText = formatDate(now);
+    document.querySelectorAll("[data-clock-time]").forEach(function (element) {
+      element.textContent = time;
+    });
+    document.querySelectorAll("[data-clock-date]").forEach(function (element) {
+      element.textContent = dateText;
+    });
   }
 
   app.clock = {
     init: function () {
       updateClock();
-      window.setInterval(updateClock, 1000 * 30);
+      window.setInterval(updateClock, 1000);
     },
     formatTime: formatTime
   };

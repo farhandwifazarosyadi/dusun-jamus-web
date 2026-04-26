@@ -63,6 +63,50 @@
       .replace(/-+/g, "-");
   }
 
+  function buildStorageFilename(prefix, fileName) {
+    var ext = "";
+    if (fileName) {
+      var dotIndex = fileName.lastIndexOf(".");
+      if (dotIndex !== -1) {
+        ext = fileName.slice(dotIndex).toLowerCase();
+      }
+    }
+    var random = Math.random().toString(36).slice(2, 10);
+    return prefix + "-" + Date.now() + "-" + random + ext;
+  }
+
+  async function uploadToBucket(bucket, folder, file) {
+    var client = getClient();
+    if (!client) {
+      return { data: null, error: "Supabase client belum siap." };
+    }
+    if (!file) {
+      return { data: null, error: "File belum dipilih." };
+    }
+
+    var path = folder + "/" + buildStorageFilename(folder, file.name || "image");
+    try {
+      var uploadResponse = await client.storage
+        .from(bucket)
+        .upload(path, file, { contentType: file.type || "image/*" });
+
+      if (uploadResponse.error) {
+        return { data: null, error: uploadResponse.error.message };
+      }
+
+      var publicResponse = client.storage.from(bucket).getPublicUrl(path);
+      return {
+        data: {
+          path: path,
+          publicUrl: publicResponse && publicResponse.data ? publicResponse.data.publicUrl : ""
+        },
+        error: null
+      };
+    } catch (error) {
+      return { data: null, error: error.message };
+    }
+  }
+
   function getClient() {
     if (!app.supabase || typeof app.supabase.initClient !== "function") {
       return null;
@@ -289,6 +333,15 @@
         return emptyItemFallback(error.message);
       }
     },
+    uploadSiteImage: function (file) {
+      return uploadToBucket("site-images", "landing", file);
+    },
+    uploadGalleryImage: function (file) {
+      return uploadToBucket("gallery-images", "gallery", file);
+    },
+    uploadPotentialImage: function (file) {
+      return uploadToBucket("potential-images", "umkm", file);
+    },
     createLandingItem: function (data) {
       var payload = {
         title: data.title || "",
@@ -306,6 +359,15 @@
         image_url: data.image_url || "",
         is_active: true,
         sort_order: 0
+      };
+      return writeData("hero_slides", function (client) {
+        return client.from("hero_slides").update(payload).eq("id", id).select("*");
+      });
+    },
+    updateLandingImage: function (id, imageUrl) {
+      var payload = {
+        image_url: imageUrl || "",
+        is_active: true
       };
       return writeData("hero_slides", function (client) {
         return client.from("hero_slides").update(payload).eq("id", id).select("*");

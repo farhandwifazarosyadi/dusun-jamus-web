@@ -17,6 +17,7 @@
     <script defer src="js/maps.js"></script>
     <script defer src="js/weather.js"></script>
     <script defer src="js/clock.js"></script>
+    <script defer src="js/calendar.js"></script>
     <script defer src="js/main.js"></script>
   </head>
   <body class="page page-home">
@@ -85,11 +86,19 @@
           <div class="tentang-widgets">
             <div class="info-card weather-card" id="weather-panel" data-weather-panel>
               <h3>Cuaca</h3>
-              <p>Data cuaca belum tersedia.</p>
+              <div class="weather-meta">
+                <p class="weather-location" data-weather-location>Dusun Jamus</p>
+                <div class="weather-main">
+                  <img class="weather-icon" alt="Ikon cuaca" data-weather-icon />
+                  <span class="weather-temp" data-weather-temp>-</span>
+                </div>
+                <p class="weather-desc" data-weather-desc>Data cuaca belum tersedia.</p>
+              </div>
             </div>
             <div class="info-card clock-card" id="clock-panel">
               <h3>Jam</h3>
-              <p data-clock-time>--:--</p>
+              <p class="clock-time" data-clock-time>--:--:--</p>
+              <p class="clock-date" data-clock-date>--</p>
             </div>
           </div>
         </div>
@@ -171,6 +180,7 @@
               <div class="map-frame" data-contact-map>
                 <p>Lokasi: Dusun Jamus. Peta belum tersedia.</p>
               </div>
+              <div class="calendar-card" data-calendar></div>
             </div>
             <div class="contact-card">
               <p class="contact-desc" data-contact-description>

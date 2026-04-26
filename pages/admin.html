@@ -66,18 +66,15 @@
           <article class="admin-panel is-active" data-admin-panel="landing">
             <header class="admin-panel-header">
               <h2>Landing</h2>
-              <p>Kelola title dan gambar landing.</p>
+              <p>Kelola gambar landing.</p>
             </header>
             <form class="admin-form" data-landing-form>
               <input type="hidden" name="id" />
               <div class="admin-grid">
-                <div class="admin-field">
-                  <label>Title</label>
-                  <input name="title" type="text" required />
-                </div>
                 <div class="admin-field admin-field-full">
-                  <label>Image URL</label>
-                  <input name="image_url" type="url" required />
+                  <label>Upload Gambar Landing</label>
+                  <input name="image_file" type="file" accept="image/*" required data-landing-file />
+                  <img class="admin-preview" alt="Preview gambar landing" data-landing-preview />
                 </div>
               </div>
               <div class="admin-actions">
@@ -91,7 +88,7 @@
                 <thead>
                   <tr>
                     <th>Title</th>
-                    <th>Image URL</th>
+                    <th>Gambar</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -113,8 +110,9 @@
                   <input name="title" type="text" required />
                 </div>
                 <div class="admin-field admin-field-full">
-                  <label>Image URL</label>
-                  <input name="image_url" type="url" required />
+                  <label>Upload Gambar</label>
+                  <input name="image_file" type="file" accept="image/*" data-gallery-file />
+                  <img class="admin-preview" alt="Preview gambar galeri" data-gallery-preview />
                 </div>
               </div>
               <div class="admin-actions">
@@ -128,7 +126,7 @@
                 <thead>
                   <tr>
                     <th>Title</th>
-                    <th>Image URL</th>
+                    <th>Gambar</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -150,8 +148,9 @@
                   <input name="title" type="text" required />
                 </div>
                 <div class="admin-field admin-field-full">
-                  <label>Image URL</label>
-                  <input name="image_url" type="url" required />
+                  <label>Upload Gambar</label>
+                  <input name="image_file" type="file" accept="image/*" data-umkm-file />
+                  <img class="admin-preview" alt="Preview gambar UMKM" data-umkm-preview />
                 </div>
               </div>
               <div class="admin-actions">
@@ -165,7 +164,7 @@
                 <thead>
                   <tr>
                     <th>Title</th>
-                    <th>Image URL</th>
+                    <th>Gambar</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -192,8 +191,9 @@
                   <input name="title" type="text" required />
                 </div>
                 <div class="admin-field admin-field-full">
-                  <label>Image URL</label>
-                  <input name="image_url" type="url" required />
+                  <label>Upload Gambar (Opsional)</label>
+                  <input name="image_file" type="file" accept="image/*" data-umkm-detail-file />
+                  <img class="admin-preview" alt="Preview gambar UMKM" data-umkm-detail-preview />
                 </div>
                 <div class="admin-field admin-field-full">
                   <label>Full Description</label>

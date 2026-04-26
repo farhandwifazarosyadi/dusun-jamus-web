@@ -2,12 +2,16 @@
 (function (app) {
   "use strict";
 
+  var mapsLoader = null;
+  var defaultLat = -7.6062;
+  var defaultLng = 110.8467;
+
   function updateMapPlaceholder(text) {
     var container = document.querySelector("[data-contact-map]");
     if (!container) {
       return;
     }
-    container.textContent = text;
+    container.innerHTML = "<p>" + text + "</p>";
   }
 
   function updateContactText(selector, text) {
@@ -49,24 +53,75 @@
     });
   }
 
-  function renderContactMap(container, apiKey, query, lat, lng) {
+  function loadGoogleMaps(apiKey) {
+    if (window.google && window.google.maps) {
+      return Promise.resolve(window.google.maps);
+    }
+    if (mapsLoader) {
+      return mapsLoader;
+    }
+
+    mapsLoader = new Promise(function (resolve, reject) {
+      var script = document.createElement("script");
+      script.src = "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(apiKey);
+      script.async = true;
+      script.defer = true;
+      script.onload = function () {
+        if (window.google && window.google.maps) {
+          resolve(window.google.maps);
+        } else {
+          reject(new Error("Google Maps gagal dimuat."));
+        }
+      };
+      script.onerror = function () {
+        reject(new Error("Google Maps gagal dimuat."));
+      };
+      document.head.appendChild(script);
+    });
+
+    return mapsLoader;
+  }
+
+  function renderContactMap(container, apiKey, label, lat, lng) {
     if (!container) {
       return;
     }
     if (!apiKey) {
-      container.innerHTML = "<p>Peta belum tersedia.</p>";
+      updateMapPlaceholder("Peta belum tersedia.");
       return;
     }
 
-    var q = query || "Dusun Jamus";
-    if (lat && lng) {
-      q = lat + "," + lng;
+    var center = {
+      lat: parseFloat(lat) || defaultLat,
+      lng: parseFloat(lng) || defaultLng
+    };
+    var title = label || "Dusun Jamus";
+
+    container.innerHTML = "<div class=\"map-canvas\"></div>";
+    var canvas = container.querySelector(".map-canvas");
+    if (!canvas) {
+      updateMapPlaceholder("Peta belum tersedia.");
+      return;
     }
 
-    var src = "https://www.google.com/maps/embed/v1/place?key=" +
-      encodeURIComponent(apiKey) + "&q=" + encodeURIComponent(q);
-
-    container.innerHTML = "<iframe loading=\"lazy\" allowfullscreen referrerpolicy=\"no-referrer-when-downgrade\" src=\"" + src + "\"></iframe>";
+    loadGoogleMaps(apiKey)
+      .then(function () {
+        var map = new window.google.maps.Map(canvas, {
+          center: center,
+          zoom: 15,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false
+        });
+        new window.google.maps.Marker({
+          position: center,
+          map: map,
+          title: title
+        });
+      })
+      .catch(function () {
+        updateMapPlaceholder("Peta belum tersedia.");
+      });
   }
 
   async function fetchContactData(client) {

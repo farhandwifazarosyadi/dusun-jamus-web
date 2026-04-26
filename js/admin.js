@@ -62,9 +62,61 @@
     }
     form.reset();
     form.dataset.editId = "";
+    form.dataset.currentImage = "";
+    clearFormPreviews(form);
     if (submitButton) {
       submitButton.textContent = "Simpan";
     }
+  }
+
+  function getFileInput(form, selector) {
+    return form ? form.querySelector(selector) : null;
+  }
+
+  function getFileFromInput(input) {
+    return input && input.files && input.files[0] ? input.files[0] : null;
+  }
+
+  function setPreviewImage(preview, url) {
+    if (!preview) {
+      return;
+    }
+    if (preview.dataset.objectUrl) {
+      URL.revokeObjectURL(preview.dataset.objectUrl);
+      preview.dataset.objectUrl = "";
+    }
+    if (url) {
+      preview.src = url;
+      preview.classList.add("is-visible");
+    } else {
+      preview.removeAttribute("src");
+      preview.classList.remove("is-visible");
+    }
+  }
+
+  function bindPreview(input, preview) {
+    if (!input || !preview) {
+      return;
+    }
+    input.addEventListener("change", function () {
+      var file = getFileFromInput(input);
+      if (!file) {
+        setPreviewImage(preview, "");
+        return;
+      }
+      var objectUrl = URL.createObjectURL(file);
+      preview.dataset.objectUrl = objectUrl;
+      setPreviewImage(preview, objectUrl);
+    });
+  }
+
+  function clearFormPreviews(form) {
+    if (!form) {
+      return;
+    }
+    $all(".admin-preview", form).forEach(function (preview) {
+      setPreviewImage(preview, "");
+    });
   }
 
   var state = {
@@ -214,9 +266,12 @@
     var items = response.data || [];
     if (list) {
       list.innerHTML = items.map(function (item) {
+        var imageHtml = item.image_url
+          ? "<img class=\"admin-thumb\" src=\"" + item.image_url + "\" alt=\"Preview\" />"
+          : "-";
         return "<tr>" +
           "<td>" + (item.title || "-") + "</td>" +
-          "<td>" + (item.image_url || "-") + "</td>" +
+          "<td>" + imageHtml + "</td>" +
           "<td>" +
             "<button class=\"admin-link\" data-landing-edit=\"" + item.id + "\">Edit</button>" +
             "<button class=\"admin-link danger\" data-landing-delete=\"" + item.id + "\">Hapus</button>" +
@@ -234,6 +289,10 @@
     var resetButton = $("[data-landing-reset]");
     var submitButton = $("[data-landing-submit]");
     var list = $("[data-landing-list]");
+    var fileInput = getFileInput(form, "[data-landing-file]");
+    var preview = $("[data-landing-preview]");
+
+    bindPreview(fileInput, preview);
 
     if (resetButton && form) {
       resetButton.addEventListener("click", function () {
@@ -244,20 +303,44 @@
     if (form) {
       form.addEventListener("submit", async function (event) {
         event.preventDefault();
-        var payload = {
-          title: getInputValue(form, "title"),
-          image_url: getInputValue(form, "image_url")
-        };
         var editId = form.dataset.editId;
-        var response = editId
-          ? await app.supabase.updateLandingItem(editId, payload)
-          : await app.supabase.createLandingItem(payload);
+        if (!editId) {
+          setStatus(status, "Pilih item landing yang akan diperbarui.", true);
+          return;
+        }
+
+        var file = getFileFromInput(fileInput);
+        if (!file) {
+          setStatus(status, "Pilih gambar landing terlebih dulu.", true);
+          return;
+        }
+
+        if (!app.supabase || !app.supabase.uploadSiteImage) {
+          setStatus(status, "Helper upload belum tersedia.", true);
+          return;
+        }
+
+        setStatus(status, "Mengunggah gambar...", false);
+        var uploadResponse = await app.supabase.uploadSiteImage(file);
+        if (uploadResponse.error) {
+          setStatus(status, uploadResponse.error, true);
+          return;
+        }
+
+        var imageUrl = uploadResponse.data ? uploadResponse.data.publicUrl : "";
+        if (!imageUrl) {
+          setStatus(status, "Gagal mendapatkan URL gambar.", true);
+          return;
+        }
+
+        var response = await app.supabase.updateLandingImage(editId, imageUrl);
 
         if (response.error) {
           setStatus(status, response.error, true);
           return;
         }
         resetForm(form, submitButton);
+        setPreviewImage(preview, "");
         await loadLandingItems();
       });
     }
@@ -294,8 +377,7 @@
         if (submitButton) {
           submitButton.textContent = "Update";
         }
-        setInputValue(form, "title", item.title);
-        setInputValue(form, "image_url", item.image_url);
+        setPreviewImage(preview, item.image_url || "");
       });
     }
   }
@@ -318,9 +400,12 @@
     var items = response.data || [];
     if (list) {
       list.innerHTML = items.map(function (item) {
+        var imageHtml = item.image_url
+          ? "<img class=\"admin-thumb\" src=\"" + item.image_url + "\" alt=\"Preview\" />"
+          : "-";
         return "<tr>" +
           "<td>" + (item.title || "-") + "</td>" +
-          "<td>" + (item.image_url || "-") + "</td>" +
+          "<td>" + imageHtml + "</td>" +
           "<td>" +
             "<button class=\"admin-link\" data-gallery-edit=\"" + item.id + "\">Edit</button>" +
             "<button class=\"admin-link danger\" data-gallery-delete=\"" + item.id + "\">Hapus</button>" +
@@ -338,6 +423,10 @@
     var resetButton = $("[data-gallery-reset]");
     var submitButton = $("[data-gallery-submit]");
     var list = $("[data-gallery-list]");
+    var fileInput = getFileInput(form, "[data-gallery-file]");
+    var preview = $("[data-gallery-preview]");
+
+    bindPreview(fileInput, preview);
 
     if (resetButton && form) {
       resetButton.addEventListener("click", function () {
@@ -348,11 +437,37 @@
     if (form) {
       form.addEventListener("submit", async function (event) {
         event.preventDefault();
-        var payload = {
-          title: getInputValue(form, "title"),
-          image_url: getInputValue(form, "image_url")
-        };
+        var title = getInputValue(form, "title");
         var editId = form.dataset.editId;
+        var file = getFileFromInput(fileInput);
+        var imageUrl = form.dataset.currentImage || "";
+
+        if (!editId && !file) {
+          setStatus(status, "Pilih gambar galeri terlebih dulu.", true);
+          return;
+        }
+
+        if (file) {
+          setStatus(status, "Mengunggah gambar...", false);
+          var uploadResponse = await app.supabase.uploadGalleryImage(file);
+          if (uploadResponse.error) {
+            setStatus(status, uploadResponse.error, true);
+            return;
+          }
+          imageUrl = uploadResponse.data ? uploadResponse.data.publicUrl : "";
+        }
+
+        if (!imageUrl) {
+          setStatus(status, "Gambar galeri belum tersedia.", true);
+          return;
+        }
+
+        var payload = {
+          title: title,
+          image_url: imageUrl,
+          slug: slugify(title)
+        };
+
         var response = editId
           ? await app.supabase.updateGalleryItem(editId, payload)
           : await app.supabase.createGalleryItem(payload);
@@ -362,6 +477,7 @@
           return;
         }
         resetForm(form, submitButton);
+        setPreviewImage(preview, "");
         await loadGalleryItems();
       });
     }
@@ -395,11 +511,12 @@
           return;
         }
         form.dataset.editId = item.id;
+        form.dataset.currentImage = item.image_url || "";
         if (submitButton) {
           submitButton.textContent = "Update";
         }
         setInputValue(form, "title", item.title);
-        setInputValue(form, "image_url", item.image_url);
+        setPreviewImage(preview, item.image_url || "");
       });
     }
   }
@@ -422,9 +539,12 @@
     state.umkmItems = response.data || [];
     if (list) {
       list.innerHTML = state.umkmItems.map(function (item) {
+        var imageHtml = item.image_url
+          ? "<img class=\"admin-thumb\" src=\"" + item.image_url + "\" alt=\"Preview\" />"
+          : "-";
         return "<tr>" +
           "<td>" + (item.title || "-") + "</td>" +
-          "<td>" + (item.image_url || "-") + "</td>" +
+          "<td>" + imageHtml + "</td>" +
           "<td>" +
             "<button class=\"admin-link\" data-umkm-edit=\"" + item.id + "\">Edit</button>" +
             "<button class=\"admin-link danger\" data-umkm-delete=\"" + item.id + "\">Hapus</button>" +
@@ -443,6 +563,10 @@
     var resetButton = $("[data-umkm-reset]");
     var submitButton = $("[data-umkm-submit]");
     var list = $("[data-umkm-list]");
+    var fileInput = getFileInput(form, "[data-umkm-file]");
+    var preview = $("[data-umkm-preview]");
+
+    bindPreview(fileInput, preview);
 
     if (resetButton && form) {
       resetButton.addEventListener("click", function () {
@@ -453,12 +577,37 @@
     if (form) {
       form.addEventListener("submit", async function (event) {
         event.preventDefault();
-        var payload = {
-          title: getInputValue(form, "title"),
-          image_url: getInputValue(form, "image_url"),
-          slug: slugify(getInputValue(form, "title"))
-        };
+        var title = getInputValue(form, "title");
         var editId = form.dataset.editId;
+        var file = getFileFromInput(fileInput);
+        var imageUrl = form.dataset.currentImage || "";
+
+        if (!editId && !file) {
+          setStatus(status, "Pilih gambar UMKM terlebih dulu.", true);
+          return;
+        }
+
+        if (file) {
+          setStatus(status, "Mengunggah gambar...", false);
+          var uploadResponse = await app.supabase.uploadPotentialImage(file);
+          if (uploadResponse.error) {
+            setStatus(status, uploadResponse.error, true);
+            return;
+          }
+          imageUrl = uploadResponse.data ? uploadResponse.data.publicUrl : "";
+        }
+
+        if (!imageUrl) {
+          setStatus(status, "Gambar UMKM belum tersedia.", true);
+          return;
+        }
+
+        var payload = {
+          title: title,
+          image_url: imageUrl,
+          slug: slugify(title)
+        };
+
         var response = editId
           ? await app.supabase.updateUmkmItem(editId, payload)
           : await app.supabase.createUmkmItem(payload);
@@ -468,6 +617,7 @@
           return;
         }
         resetForm(form, submitButton);
+        setPreviewImage(preview, "");
         await loadUmkmItems();
       });
     }
@@ -500,11 +650,12 @@
           return;
         }
         form.dataset.editId = item.id;
+        form.dataset.currentImage = item.image_url || "";
         if (submitButton) {
           submitButton.textContent = "Update";
         }
         setInputValue(form, "title", item.title);
-        setInputValue(form, "image_url", item.image_url);
+        setPreviewImage(preview, item.image_url || "");
       });
     }
   }
@@ -529,11 +680,17 @@
     var select = $("[data-umkm-select]");
     var status = $("[data-umkm-detail-status]");
 
+    var fileInput = getFileInput(form, "[data-umkm-detail-file]");
+    var preview = $("[data-umkm-detail-preview]");
+
+    bindPreview(fileInput, preview);
     if (select) {
       select.addEventListener("change", async function () {
         var id = select.value;
         if (!id) {
           form.reset();
+          form.dataset.currentImage = "";
+          setPreviewImage(preview, "");
           return;
         }
         var response = await app.supabase.getUmkmItemById(id);
@@ -543,7 +700,8 @@
         }
         var item = response.data;
         setInputValue(form, "title", item.title);
-        setInputValue(form, "image_url", item.image_url);
+        form.dataset.currentImage = item.image_url || "";
+        setPreviewImage(preview, item.image_url || "");
         setInputValue(form, "full_description", item.full_description);
         setStatus(status, "", false);
       });
@@ -557,9 +715,27 @@
           return;
         }
         var title = getInputValue(form, "title");
+        var file = getFileFromInput(fileInput);
+        var imageUrl = form.dataset.currentImage || "";
+
+        if (file) {
+          setStatus(status, "Mengunggah gambar...", false);
+          var uploadResponse = await app.supabase.uploadPotentialImage(file);
+          if (uploadResponse.error) {
+            setStatus(status, uploadResponse.error, true);
+            return;
+          }
+          imageUrl = uploadResponse.data ? uploadResponse.data.publicUrl : "";
+        }
+
+        if (!imageUrl) {
+          setStatus(status, "Gambar UMKM belum tersedia.", true);
+          return;
+        }
+
         var payload = {
           title: title,
-          image_url: getInputValue(form, "image_url"),
+          image_url: imageUrl,
           full_description: getInputValue(form, "full_description"),
           slug: slugify(title)
         };

@@ -50,6 +50,7 @@
       safeInit(app.maps, "maps");
       safeInit(app.weather, "weather");
       safeInit(app.clock, "clock");
+      safeInit(app.calendar, "calendar");
 
       loadAboutPreview();
     }
