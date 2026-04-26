@@ -163,6 +163,7 @@
     }
 
     await loadLandingItems();
+    await loadAboutProfile();
     await loadGalleryItems();
     await loadUmkmItems();
   }
@@ -227,6 +228,7 @@
 
     bindAdminTabs();
     bindLandingModule();
+    bindAboutModule();
     bindGalleryModule();
     bindUmkmModule();
     bindUmkmDetailModule();
@@ -245,6 +247,60 @@
           panel.classList.toggle("is-active", panel.getAttribute("data-admin-panel") === target);
         });
       });
+    });
+  }
+
+  async function loadAboutProfile() {
+    var form = $("[data-about-form]");
+    var status = $("[data-about-status]");
+    if (!form) {
+      return;
+    }
+    if (!app.supabase || typeof app.supabase.getSiteProfile !== "function") {
+      setStatus(status, "Supabase helper belum tersedia.", true);
+      return;
+    }
+
+    setStatus(status, "Memuat data tentang desa...", false);
+    var response = await app.supabase.getSiteProfile();
+    if (response.error) {
+      setStatus(status, response.error, true);
+      return;
+    }
+
+    var profile = response.data || {};
+    form.dataset.profileId = profile.id || "";
+    setInputValue(form, "history", profile.history || "");
+    setInputValue(form, "full_description", profile.full_description || "");
+    setStatus(status, "", false);
+  }
+
+  function bindAboutModule() {
+    var form = $("[data-about-form]");
+    var status = $("[data-about-status]");
+    if (!form) {
+      return;
+    }
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      if (!app.supabase || typeof app.supabase.updateSiteProfile !== "function") {
+        setStatus(status, "Supabase helper belum tersedia.", true);
+        return;
+      }
+
+      var payload = {
+        history: getInputValue(form, "history"),
+        full_description: getInputValue(form, "full_description")
+      };
+
+      setStatus(status, "Menyimpan...", false);
+      var response = await app.supabase.updateSiteProfile(payload);
+      if (response.error) {
+        setStatus(status, response.error, true);
+        return;
+      }
+      setStatus(status, "Tersimpan.", false);
     });
   }
 
@@ -465,6 +521,7 @@
         var payload = {
           title: title,
           image_url: imageUrl,
+          description: getInputValue(form, "description"),
           slug: slugify(title)
         };
 
@@ -516,6 +573,7 @@
           submitButton.textContent = "Update";
         }
         setInputValue(form, "title", item.title);
+        setInputValue(form, "description", item.description);
         setPreviewImage(preview, item.image_url || "");
       });
     }

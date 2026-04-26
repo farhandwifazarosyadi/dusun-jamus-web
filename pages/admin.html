@@ -57,6 +57,7 @@
       <section class="admin-dashboard is-hidden" data-admin-section>
         <aside class="admin-sidebar" aria-label="Navigasi admin">
           <button class="admin-nav-btn is-active" type="button" data-admin-tab="landing">Landing</button>
+          <button class="admin-nav-btn" type="button" data-admin-tab="about">Tentang Desa</button>
           <button class="admin-nav-btn" type="button" data-admin-tab="gallery">Galeri Desa</button>
           <button class="admin-nav-btn" type="button" data-admin-tab="umkm">Produk UMKM</button>
           <button class="admin-nav-btn" type="button" data-admin-tab="umkm-detail">Detail UMKM</button>
@@ -97,6 +98,29 @@
             </div>
           </article>
 
+          <article class="admin-panel" data-admin-panel="about">
+            <header class="admin-panel-header">
+              <h2>Tentang Desa</h2>
+              <p>Kelola teks detail untuk Sejarah &amp; Visi Misi dan Potensi Desa.</p>
+            </header>
+            <form class="admin-form" data-about-form>
+              <div class="admin-grid">
+                <div class="admin-field admin-field-full">
+                  <label>Detail Sejarah &amp; Visi Misi</label>
+                  <textarea name="history" rows="4" data-about-history></textarea>
+                </div>
+                <div class="admin-field admin-field-full">
+                  <label>Detail Potensi Desa</label>
+                  <textarea name="full_description" rows="4" data-about-potential></textarea>
+                </div>
+              </div>
+              <div class="admin-actions">
+                <button class="btn btn-primary" type="submit" data-about-submit>Simpan</button>
+              </div>
+              <p class="admin-status" data-about-status></p>
+            </form>
+          </article>
+
           <article class="admin-panel" data-admin-panel="gallery">
             <header class="admin-panel-header">
               <h2>Galeri Desa</h2>
@@ -113,6 +137,10 @@
                   <label>Upload Gambar</label>
                   <input name="image_file" type="file" accept="image/*" data-gallery-file />
                   <img class="admin-preview" alt="Preview gambar galeri" data-gallery-preview />
+                </div>
+                <div class="admin-field admin-field-full">
+                  <label>Deskripsi</label>
+                  <textarea name="description" rows="3"></textarea>
                 </div>
               </div>
               <div class="admin-actions">

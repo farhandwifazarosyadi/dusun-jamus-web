@@ -15,6 +15,8 @@
 
   async function loadAboutPreview() {
     var target = document.querySelector("[data-about-description]");
+    var historyTarget = document.querySelector("[data-about-history]");
+    var potentialTarget = document.querySelector("[data-about-potential]");
     if (!target) {
       return;
     }
@@ -25,8 +27,16 @@
 
     try {
       var response = await app.supabase.getSiteProfile();
-      if (response && response.data && response.data.short_description) {
-        target.textContent = response.data.short_description;
+      if (response && response.data) {
+        if (response.data.short_description) {
+          target.textContent = response.data.short_description;
+        }
+        if (historyTarget && response.data.history) {
+          historyTarget.textContent = response.data.history;
+        }
+        if (potentialTarget && response.data.full_description) {
+          potentialTarget.textContent = response.data.full_description;
+        }
       }
     } catch (error) {
       console.warn("Tentang desa gagal dimuat:", error);

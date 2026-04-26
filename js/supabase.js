@@ -208,6 +208,47 @@
       var response = await selectAll("site_profiles");
       return { data: response.data[0] || null, error: response.error };
     },
+    updateSiteProfile: async function (data) {
+      var client = getClient();
+      if (!client) {
+        return { data: null, error: "Supabase client belum siap." };
+      }
+
+      try {
+        var existing = await client.from("site_profiles").select("id").limit(1).maybeSingle();
+        if (existing.error) {
+          return { data: null, error: existing.error.message };
+        }
+
+        var payload = {
+          history: data.history || "",
+          full_description: data.full_description || ""
+        };
+
+        if (existing.data && existing.data.id) {
+          var updateResponse = await client
+            .from("site_profiles")
+            .update(payload)
+            .eq("id", existing.data.id)
+            .select("*");
+          if (updateResponse.error) {
+            return { data: null, error: updateResponse.error.message };
+          }
+          return { data: updateResponse.data || null, error: null };
+        }
+
+        var insertResponse = await client
+          .from("site_profiles")
+          .insert([payload])
+          .select("*");
+        if (insertResponse.error) {
+          return { data: null, error: insertResponse.error.message };
+        }
+        return { data: insertResponse.data || null, error: null };
+      } catch (error) {
+        return { data: null, error: error.message };
+      }
+    },
     getSiteContacts: async function () {
       return selectAll("site_contacts");
     },
@@ -281,7 +322,7 @@
       try {
         var response = await client
           .from("gallery_items")
-          .select("id, title, image_url")
+          .select("id, title, image_url, description")
           .order("id", { ascending: false });
         if (response.error) {
           return emptyArrayFallback(response.error.message);
@@ -382,6 +423,7 @@
       var payload = {
         title: data.title || "",
         image_url: data.image_url || "",
+        description: data.description || "",
         slug: data.slug || slugify(data.title || ""),
         is_active: true,
         sort_order: 0
@@ -394,6 +436,7 @@
       var payload = {
         title: data.title || "",
         image_url: data.image_url || "",
+        description: data.description || "",
         slug: data.slug || slugify(data.title || ""),
         is_active: true
       };

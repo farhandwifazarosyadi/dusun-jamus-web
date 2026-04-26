@@ -3,8 +3,9 @@
   "use strict";
 
   var mapsLoader = null;
-  var defaultLat = -7.6062;
-  var defaultLng = 110.8467;
+  var defaultLat = -7.8660000;
+  var defaultLng = 111.1020000;
+  var defaultAddress = "Dusun Jamus, Slogohimo, Wonogiri, Jawa Tengah";
 
   function updateMapPlaceholder(text) {
     var container = document.querySelector("[data-contact-map]");
@@ -87,7 +88,7 @@
       return;
     }
     if (!apiKey) {
-      updateMapPlaceholder("Peta belum tersedia.");
+      updateMapPlaceholder("Lokasi: " + defaultAddress + ". Peta belum tersedia.");
       return;
     }
 
@@ -109,6 +110,7 @@
         var map = new window.google.maps.Map(canvas, {
           center: center,
           zoom: 15,
+          zoomControl: true,
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false
@@ -116,11 +118,11 @@
         new window.google.maps.Marker({
           position: center,
           map: map,
-          title: title
+          title: "Dusun Jamus"
         });
       })
       .catch(function () {
-        updateMapPlaceholder("Peta belum tersedia.");
+        updateMapPlaceholder("Lokasi: " + defaultAddress + ". Peta belum tersedia.");
       });
   }
 
@@ -145,7 +147,7 @@
         : "";
 
       if (!apiKey) {
-        updateMapPlaceholder("Lokasi: Dusun Jamus. Peta belum tersedia.");
+        updateMapPlaceholder("Lokasi: " + defaultAddress + ". Peta belum tersedia.");
       }
 
       var contactSection = document.querySelector("[data-contact-section]");
@@ -178,12 +180,12 @@
 
       var contact = response.contact || {};
       var socials = response.socials || [];
-      var address = contact.address || contact.alamat || "-";
+      var address = contact.address || contact.alamat || defaultAddress;
       var phone = contact.phone || contact.telepon || contact.whatsapp || "-";
       var email = contact.email || "-";
       var description = contact.description || contact.keterangan || "Informasi kontak Dusun Jamus.";
-      var lat = contact.latitude || contact.lat || "";
-      var lng = contact.longitude || contact.lng || "";
+      var lat = contact.latitude || contact.lat || defaultLat;
+      var lng = contact.longitude || contact.lng || defaultLng;
 
       updateContactText("[data-contact-description]", description);
       updateContactText("[data-contact-address]", "Alamat: " + address);

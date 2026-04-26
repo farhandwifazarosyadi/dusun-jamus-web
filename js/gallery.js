@@ -28,6 +28,23 @@
       img.alt = item.title || label;
       card.textContent = "";
       card.appendChild(img);
+
+      var body = document.createElement("div");
+      body.className = "gallery-card-body";
+
+      var title = document.createElement("h3");
+      title.className = "gallery-card-title";
+      title.textContent = item.title || label;
+      body.appendChild(title);
+
+      if (item.description) {
+        var desc = document.createElement("p");
+        desc.className = "gallery-card-desc";
+        desc.textContent = item.description;
+        body.appendChild(desc);
+      }
+
+      card.appendChild(body);
     } else {
       card.textContent = label;
     }
@@ -134,6 +151,7 @@
           var imageUrl = pickValue(item, ["image_url", "imageUrl", "photo_url", "thumbnail_url"]);
           return {
             title: pickValue(item, ["title", "name", "caption"]) || "Foto Desa",
+            description: pickValue(item, ["description", "desc", "detail"]) || "",
             imageUrl: imageUrl
           };
         });
