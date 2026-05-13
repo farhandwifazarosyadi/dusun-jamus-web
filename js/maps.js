@@ -3,9 +3,18 @@
   "use strict";
 
   var mapsLoader = null;
-  var defaultLat = -7.8660000;
-  var defaultLng = 111.1020000;
-  var defaultAddress = "Dusun Jamus, Slogohimo, Wonogiri, Jawa Tengah";
+  var locationConfig = app.config && app.config.location ? app.config.location : null;
+  var defaultLat = locationConfig && typeof locationConfig.latitude === "number"
+    ? locationConfig.latitude
+    : -7.83552;
+  var defaultLng = locationConfig && typeof locationConfig.longitude === "number"
+    ? locationConfig.longitude
+    : 110.17035;
+  var defaultAddress = locationConfig && locationConfig.fullAddress
+    ? locationConfig.fullAddress
+    : "Dusun Jamus, Kecamatan Pengasih, Kabupaten Kulon Progo, DIY";
+  var defaultName = locationConfig && locationConfig.name ? locationConfig.name : "Dusun Jamus";
+  var forbiddenAddressTerms = ["wonogiri", "slogohimo", "jawa tengah"];
 
   function updateMapPlaceholder(text) {
     var container = document.querySelector("[data-contact-map]");
@@ -27,6 +36,27 @@
     if (status) {
       status.classList.toggle("is-hidden", !visible);
     }
+  }
+
+  function isValidCoordinate(value, min, max) {
+    if (value === null || value === undefined || value === "") {
+      return false;
+    }
+    var numeric = typeof value === "number" ? value : parseFloat(value);
+    if (!Number.isFinite(numeric)) {
+      return false;
+    }
+    return numeric >= min && numeric <= max;
+  }
+
+  function isForbiddenAddress(text) {
+    if (!text) {
+      return false;
+    }
+    var normalized = String(text).toLowerCase();
+    return forbiddenAddressTerms.some(function (term) {
+      return normalized.indexOf(term) !== -1;
+    });
   }
 
   function renderSocialLinks(container, items) {
@@ -93,10 +123,10 @@
     }
 
     var center = {
-      lat: parseFloat(lat) || defaultLat,
-      lng: parseFloat(lng) || defaultLng
+      lat: isValidCoordinate(lat, -90, 90) ? parseFloat(lat) : defaultLat,
+      lng: isValidCoordinate(lng, -180, 180) ? parseFloat(lng) : defaultLng
     };
-    var title = label || "Dusun Jamus";
+    var title = label || defaultName;
 
     container.innerHTML = "<div class=\"map-canvas\"></div>";
     var canvas = container.querySelector(".map-canvas");
@@ -115,10 +145,17 @@
           streetViewControl: false,
           fullscreenControl: false
         });
-        new window.google.maps.Marker({
+        var marker = new window.google.maps.Marker({
           position: center,
           map: map,
-          title: "Dusun Jamus"
+          title: defaultName
+        });
+        var infoWindow = new window.google.maps.InfoWindow({
+          content: "<div><strong>" + defaultName + "</strong><br />" + defaultAddress + "</div>"
+        });
+        infoWindow.open(map, marker);
+        marker.addListener("click", function () {
+          infoWindow.open(map, marker);
         });
       })
       .catch(function () {
@@ -186,6 +223,15 @@
       var description = contact.description || contact.keterangan || "Informasi kontak Dusun Jamus.";
       var lat = contact.latitude || contact.lat || defaultLat;
       var lng = contact.longitude || contact.lng || defaultLng;
+      if (!address || isForbiddenAddress(address)) {
+        address = defaultAddress;
+      }
+      if (!isValidCoordinate(lat, -90, 90)) {
+        lat = defaultLat;
+      }
+      if (!isValidCoordinate(lng, -180, 180)) {
+        lng = defaultLng;
+      }
 
       updateContactText("[data-contact-description]", description);
       updateContactText("[data-contact-address]", "Alamat: " + address);

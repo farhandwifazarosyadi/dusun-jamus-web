@@ -42,14 +42,32 @@
       "&appid=" + encodeURIComponent(apiKey) + "&units=metric&lang=id";
   }
 
+  function isValidCoordinate(value, min, max) {
+    if (value === null || value === undefined || value === "") {
+      return false;
+    }
+    var numeric = typeof value === "number" ? value : parseFloat(value);
+    if (!Number.isFinite(numeric)) {
+      return false;
+    }
+    return numeric >= min && numeric <= max;
+  }
+
   app.weather = {
     init: async function () {
       var apiKey = app.config && typeof app.config.get === "function"
         ? app.config.get("openWeatherApiKey")
         : "";
-      var fallbackLocation = "Dusun Jamus";
-      var fallbackLat = -7.8660000;
-      var fallbackLng = 111.1020000;
+      var locationConfig = app.config && app.config.location ? app.config.location : null;
+      var fallbackLocation = locationConfig && locationConfig.name
+        ? locationConfig.name
+        : "Dusun Jamus";
+      var fallbackLat = locationConfig && typeof locationConfig.latitude === "number"
+        ? locationConfig.latitude
+        : -7.83552;
+      var fallbackLng = locationConfig && typeof locationConfig.longitude === "number"
+        ? locationConfig.longitude
+        : 110.17035;
 
       async function resolveCoordinates() {
         if (app.supabase && typeof app.supabase.getSiteContacts === "function") {
@@ -58,8 +76,8 @@
             var contact = response && response.data && response.data[0] ? response.data[0] : null;
             var latValue = contact && (contact.latitude || contact.lat);
             var lngValue = contact && (contact.longitude || contact.lng);
-            if (latValue && lngValue) {
-              return { lat: latValue, lng: lngValue };
+            if (isValidCoordinate(latValue, -90, 90) && isValidCoordinate(lngValue, -180, 180)) {
+              return { lat: parseFloat(latValue), lng: parseFloat(lngValue) };
             }
           } catch (error) {
             console.warn("Gagal membaca kontak untuk cuaca.", error);

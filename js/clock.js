@@ -9,7 +9,8 @@
     return date.toLocaleTimeString("id-ID", {
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit"
+      second: "2-digit",
+      timeZone: "Asia/Jakarta"
     });
   }
 
@@ -21,7 +22,8 @@
       weekday: "long",
       day: "2-digit",
       month: "long",
-      year: "numeric"
+      year: "numeric",
+      timeZone: "Asia/Jakarta"
     });
   }
 
