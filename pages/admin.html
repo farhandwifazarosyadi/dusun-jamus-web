@@ -61,6 +61,8 @@
           <button class="admin-nav-btn" type="button" data-admin-tab="gallery">Galeri Desa</button>
           <button class="admin-nav-btn" type="button" data-admin-tab="umkm">Produk UMKM</button>
           <button class="admin-nav-btn" type="button" data-admin-tab="umkm-detail">Detail UMKM</button>
+          <button class="admin-nav-btn" type="button" data-admin-tab="karang-taruna">Karang Taruna</button>
+          <button class="admin-nav-btn" type="button" data-admin-tab="umkm-catalog">Katalog UMKM</button>
         </aside>
 
         <div class="admin-content">
@@ -233,6 +235,136 @@
               </div>
               <p class="admin-status" data-umkm-detail-status></p>
             </form>
+          </article>
+
+          <article class="admin-panel" data-admin-panel="karang-taruna">
+            <header class="admin-panel-header">
+              <h2>Kelola Karang Taruna</h2>
+              <p>Perbarui informasi umum, struktur organisasi, dan data pengurus.</p>
+            </header>
+            <form class="admin-form" data-karang-info-form>
+              <div class="admin-grid">
+                <div class="admin-field">
+                  <label>Judul</label>
+                  <input name="title" type="text" required />
+                </div>
+                <div class="admin-field admin-field-full">
+                  <label>Deskripsi</label>
+                  <textarea name="description" rows="4"></textarea>
+                </div>
+                <div class="admin-field admin-field-full">
+                  <label>Upload Struktur Organisasi</label>
+                  <input name="structure_file" type="file" accept="image/*" data-karang-structure-file />
+                  <img class="admin-preview" alt="Preview struktur organisasi" data-karang-structure-preview />
+                </div>
+              </div>
+              <div class="admin-actions">
+                <button class="btn btn-primary" type="submit" data-karang-info-submit>Simpan</button>
+                <button class="btn btn-secondary" type="button" data-karang-info-reset>Reset</button>
+              </div>
+              <p class="admin-status" data-karang-info-status></p>
+            </form>
+
+            <div class="admin-divider"></div>
+
+            <header class="admin-panel-header">
+              <h3>Pengurus &amp; Anggota</h3>
+              <p>Tambah, edit, dan hapus data pengurus Karang Taruna.</p>
+            </header>
+            <form class="admin-form" data-karang-member-form>
+              <input type="hidden" name="id" />
+              <div class="admin-grid">
+                <div class="admin-field">
+                  <label>Nama</label>
+                  <input name="name" type="text" required />
+                </div>
+                <div class="admin-field">
+                  <label>Jabatan</label>
+                  <input name="position" type="text" required />
+                </div>
+                <div class="admin-field admin-field-full">
+                  <label>Upload Foto</label>
+                  <input name="photo_file" type="file" accept="image/*" data-karang-member-file />
+                  <img class="admin-preview" alt="Preview foto anggota" data-karang-member-preview />
+                </div>
+                <div class="admin-field admin-field-full">
+                  <label>Deskripsi Singkat</label>
+                  <textarea name="description" rows="3"></textarea>
+                </div>
+              </div>
+              <div class="admin-actions">
+                <button class="btn btn-primary" type="submit" data-karang-member-submit>Simpan</button>
+                <button class="btn btn-secondary" type="button" data-karang-member-reset>Reset</button>
+              </div>
+              <p class="admin-status" data-karang-member-status></p>
+            </form>
+            <div class="admin-table-wrapper">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Foto</th>
+                    <th>Nama</th>
+                    <th>Jabatan</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody data-karang-member-list></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="admin-panel" data-admin-panel="umkm-catalog">
+            <header class="admin-panel-header">
+              <h2>Kelola Katalog Produk UMKM</h2>
+              <p>Tambah dan kelola katalog produk berdasarkan UMKM.</p>
+            </header>
+            <form class="admin-form" data-umkm-catalog-form>
+              <input type="hidden" name="id" />
+              <div class="admin-field admin-field-full">
+                <label>Pilih UMKM</label>
+                <select name="umkm_id" data-umkm-catalog-select required>
+                  <option value="">Pilih UMKM</option>
+                </select>
+              </div>
+              <div class="admin-grid">
+                <div class="admin-field">
+                  <label>Nama Produk</label>
+                  <input name="title" type="text" required />
+                </div>
+                <div class="admin-field">
+                  <label>Harga</label>
+                  <input name="price_text" type="text" placeholder="Rp15.000" />
+                </div>
+                <div class="admin-field admin-field-full">
+                  <label>Upload Gambar Produk</label>
+                  <input name="image_file" type="file" accept="image/*" data-umkm-catalog-file />
+                  <img class="admin-preview" alt="Preview gambar katalog" data-umkm-catalog-preview />
+                </div>
+                <div class="admin-field admin-field-full">
+                  <label>Deskripsi Produk</label>
+                  <textarea name="description" rows="3"></textarea>
+                </div>
+              </div>
+              <div class="admin-actions">
+                <button class="btn btn-primary" type="submit" data-umkm-catalog-submit>Simpan</button>
+                <button class="btn btn-secondary" type="button" data-umkm-catalog-reset>Reset</button>
+              </div>
+              <p class="admin-status" data-umkm-catalog-status></p>
+            </form>
+            <div class="admin-table-wrapper">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Produk</th>
+                    <th>Harga</th>
+                    <th>UMKM</th>
+                    <th>Gambar</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody data-umkm-catalog-list></tbody>
+              </table>
+            </div>
           </article>
         </div>
       </section>

@@ -477,6 +477,179 @@
       return writeData("potential_items", function (client) {
         return client.from("potential_items").delete().eq("id", id).select("*");
       });
+    },
+    getKarangTarunaInformation: async function () {
+      var client = getClient();
+      if (!client) {
+        return emptyItemFallback("Supabase client belum siap.");
+      }
+      try {
+        var response = await client
+          .from("karang_taruna_information")
+          .select("id, title, description, structure_image_url")
+          .order("id", { ascending: true })
+          .limit(1)
+          .maybeSingle();
+        if (response.error) {
+          return emptyItemFallback(response.error.message);
+        }
+        return { data: response.data || null, error: null };
+      } catch (error) {
+        return emptyItemFallback(error.message);
+      }
+    },
+    saveKarangTarunaInformation: async function (data) {
+      var client = getClient();
+      if (!client) {
+        return { data: null, error: "Supabase client belum siap." };
+      }
+      try {
+        var existing = await client
+          .from("karang_taruna_information")
+          .select("id")
+          .limit(1)
+          .maybeSingle();
+        if (existing.error) {
+          return { data: null, error: existing.error.message };
+        }
+
+        var payload = {
+          title: data.title || "",
+          description: data.description || "",
+          structure_image_url: data.structure_image_url || ""
+        };
+
+        if (existing.data && existing.data.id) {
+          var updateResponse = await client
+            .from("karang_taruna_information")
+            .update(payload)
+            .eq("id", existing.data.id)
+            .select("*");
+          if (updateResponse.error) {
+            return { data: null, error: updateResponse.error.message };
+          }
+          return { data: updateResponse.data || null, error: null };
+        }
+
+        var insertResponse = await client
+          .from("karang_taruna_information")
+          .insert([payload])
+          .select("*");
+        if (insertResponse.error) {
+          return { data: null, error: insertResponse.error.message };
+        }
+        return { data: insertResponse.data || null, error: null };
+      } catch (error) {
+        return { data: null, error: error.message };
+      }
+    },
+    getKarangTarunaMembers: async function () {
+      var client = getClient();
+      if (!client) {
+        return emptyArrayFallback("Supabase client belum siap.");
+      }
+      try {
+        var response = await client
+          .from("karang_taruna_members")
+          .select("id, name, position, photo_url, description, sort_order, is_active")
+          .order("sort_order", { ascending: true })
+          .order("id", { ascending: true });
+        if (response.error) {
+          return emptyArrayFallback(response.error.message);
+        }
+        return { data: normalizeItems(response.data), error: null };
+      } catch (error) {
+        return emptyArrayFallback(error.message);
+      }
+    },
+    createKarangTarunaMember: function (data) {
+      var payload = {
+        name: data.name || "",
+        position: data.position || "",
+        photo_url: data.photo_url || "",
+        description: data.description || "",
+        sort_order: Number.isFinite(data.sort_order) ? data.sort_order : 0,
+        is_active: data.is_active !== false
+      };
+      return writeData("karang_taruna_members", function (client) {
+        return client.from("karang_taruna_members").insert([payload]).select("*");
+      });
+    },
+    updateKarangTarunaMember: function (id, data) {
+      var payload = {
+        name: data.name || "",
+        position: data.position || "",
+        photo_url: data.photo_url || "",
+        description: data.description || "",
+        sort_order: Number.isFinite(data.sort_order) ? data.sort_order : 0,
+        is_active: data.is_active !== false
+      };
+      return writeData("karang_taruna_members", function (client) {
+        return client.from("karang_taruna_members").update(payload).eq("id", id).select("*");
+      });
+    },
+    deleteKarangTarunaMember: function (id) {
+      return writeData("karang_taruna_members", function (client) {
+        return client.from("karang_taruna_members").delete().eq("id", id).select("*");
+      });
+    },
+    uploadKarangTarunaImage: function (file) {
+      return uploadToBucket("site-images", "karang-taruna", file);
+    },
+    getUmkmCatalogItems: async function () {
+      var client = getClient();
+      if (!client) {
+        return emptyArrayFallback("Supabase client belum siap.");
+      }
+      try {
+        var response = await client
+          .from("umkm_catalog_items")
+          .select("id, umkm_id, title, description, price_text, image_url, sort_order, is_active")
+          .order("sort_order", { ascending: true })
+          .order("id", { ascending: true });
+        if (response.error) {
+          return emptyArrayFallback(response.error.message);
+        }
+        return { data: normalizeItems(response.data), error: null };
+      } catch (error) {
+        return emptyArrayFallback(error.message);
+      }
+    },
+    createUmkmCatalogItem: function (data) {
+      var payload = {
+        umkm_id: data.umkm_id,
+        title: data.title || "",
+        description: data.description || "",
+        price_text: data.price_text || "",
+        image_url: data.image_url || "",
+        sort_order: Number.isFinite(data.sort_order) ? data.sort_order : 0,
+        is_active: data.is_active !== false
+      };
+      return writeData("umkm_catalog_items", function (client) {
+        return client.from("umkm_catalog_items").insert([payload]).select("*");
+      });
+    },
+    updateUmkmCatalogItem: function (id, data) {
+      var payload = {
+        umkm_id: data.umkm_id,
+        title: data.title || "",
+        description: data.description || "",
+        price_text: data.price_text || "",
+        image_url: data.image_url || "",
+        sort_order: Number.isFinite(data.sort_order) ? data.sort_order : 0,
+        is_active: data.is_active !== false
+      };
+      return writeData("umkm_catalog_items", function (client) {
+        return client.from("umkm_catalog_items").update(payload).eq("id", id).select("*");
+      });
+    },
+    deleteUmkmCatalogItem: function (id) {
+      return writeData("umkm_catalog_items", function (client) {
+        return client.from("umkm_catalog_items").delete().eq("id", id).select("*");
+      });
+    },
+    uploadUmkmCatalogImage: function (file) {
+      return uploadToBucket("potential-images", "umkm-catalog", file);
     }
   };
 })(window.DusunJamus = window.DusunJamus || {});

@@ -120,7 +120,9 @@
   }
 
   var state = {
-    umkmItems: []
+    umkmItems: [],
+    karangMembers: [],
+    umkmCatalogItems: []
   };
 
   async function initAdminPage() {
@@ -166,6 +168,8 @@
     await loadAboutProfile();
     await loadGalleryItems();
     await loadUmkmItems();
+    await renderKarangTarunaAdmin();
+    await renderUmkmCatalogAdmin();
   }
 
   async function checkSession() {
@@ -232,6 +236,8 @@
     bindGalleryModule();
     bindUmkmModule();
     bindUmkmDetailModule();
+    bindKarangTarunaForm();
+    bindUmkmCatalogForm();
   }
 
   function bindAdminTabs() {
@@ -719,18 +725,20 @@
   }
 
   function populateUmkmSelect() {
-    var select = $("[data-umkm-select]");
-    if (!select) {
+    var selects = $all("[data-umkm-select], [data-umkm-catalog-select]");
+    if (!selects.length) {
       return;
     }
-    var current = select.value;
-    select.innerHTML = "<option value=\"\">Pilih UMKM</option>" +
-      state.umkmItems.map(function (item) {
-        return "<option value=\"" + item.id + "\">" + (item.title || "UMKM") + "</option>";
-      }).join("");
-    if (current) {
-      select.value = current;
-    }
+    selects.forEach(function (select) {
+      var current = select.value;
+      select.innerHTML = "<option value=\"\">Pilih UMKM</option>" +
+        state.umkmItems.map(function (item) {
+          return "<option value=\"" + item.id + "\">" + (item.title || "UMKM") + "</option>";
+        }).join("");
+      if (current) {
+        select.value = current;
+      }
+    });
   }
 
   async function bindUmkmDetailModule() {
@@ -807,6 +815,426 @@
         await loadUmkmItems();
       });
     }
+  }
+
+  async function renderKarangTarunaAdmin() {
+    await loadKarangTarunaInfo();
+    await renderKarangTarunaMembers();
+  }
+
+  async function loadKarangTarunaInfo() {
+    var form = $("[data-karang-info-form]");
+    var status = $("[data-karang-info-status]");
+    var preview = $("[data-karang-structure-preview]");
+    if (!form) {
+      return;
+    }
+    if (!app.supabase || typeof app.supabase.getKarangTarunaInformation !== "function") {
+      setStatus(status, "Supabase helper belum tersedia.", true);
+      return;
+    }
+
+    setStatus(status, "Memuat informasi Karang Taruna...", false);
+    var response = await app.supabase.getKarangTarunaInformation();
+    if (response.error) {
+      setStatus(status, response.error, true);
+      return;
+    }
+
+    var info = response.data || {};
+    form.dataset.infoId = info.id || "";
+    form.dataset.currentImage = info.structure_image_url || "";
+    setInputValue(form, "title", info.title || "");
+    setInputValue(form, "description", info.description || "");
+    setPreviewImage(preview, info.structure_image_url || "");
+    setStatus(status, "", false);
+  }
+
+  function bindKarangTarunaForm() {
+    var infoForm = $("[data-karang-info-form]");
+    var infoStatus = $("[data-karang-info-status]");
+    var infoReset = $("[data-karang-info-reset]");
+    var structureInput = getFileInput(infoForm, "[data-karang-structure-file]");
+    var structurePreview = $("[data-karang-structure-preview]");
+
+    bindPreview(structureInput, structurePreview);
+
+    if (infoReset) {
+      infoReset.addEventListener("click", function () {
+        loadKarangTarunaInfo();
+      });
+    }
+
+    if (infoForm) {
+      infoForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        if (!app.supabase || typeof app.supabase.saveKarangTarunaInformation !== "function") {
+          setStatus(infoStatus, "Supabase helper belum tersedia.", true);
+          return;
+        }
+
+        var title = getInputValue(infoForm, "title");
+        var description = getInputValue(infoForm, "description");
+        var file = getFileFromInput(structureInput);
+        var imageUrl = infoForm.dataset.currentImage || "";
+
+        if (file) {
+          setStatus(infoStatus, "Mengunggah struktur organisasi...", false);
+          var uploadResponse = await app.supabase.uploadKarangTarunaImage(file);
+          if (uploadResponse.error) {
+            setStatus(infoStatus, uploadResponse.error, true);
+            return;
+          }
+          imageUrl = uploadResponse.data ? uploadResponse.data.publicUrl : "";
+        }
+
+        var payload = {
+          title: title,
+          description: description,
+          structure_image_url: imageUrl
+        };
+
+        setStatus(infoStatus, "Menyimpan informasi...", false);
+        var response = await app.supabase.saveKarangTarunaInformation(payload);
+        if (response.error) {
+          setStatus(infoStatus, response.error, true);
+          return;
+        }
+
+        infoForm.dataset.currentImage = imageUrl || "";
+        setPreviewImage(structurePreview, imageUrl || "");
+        setStatus(infoStatus, "Tersimpan.", false);
+      });
+    }
+
+    var memberForm = $("[data-karang-member-form]");
+    var memberStatus = $("[data-karang-member-status]");
+    var memberReset = $("[data-karang-member-reset]");
+    var memberSubmit = $("[data-karang-member-submit]");
+    var memberList = $("[data-karang-member-list]");
+    var memberFile = getFileInput(memberForm, "[data-karang-member-file]");
+    var memberPreview = $("[data-karang-member-preview]");
+
+    bindPreview(memberFile, memberPreview);
+
+    if (memberReset && memberForm) {
+      memberReset.addEventListener("click", function () {
+        resetForm(memberForm, memberSubmit);
+        setStatus(memberStatus, "", false);
+      });
+    }
+
+    if (memberForm) {
+      memberForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        if (!app.supabase || typeof app.supabase.createKarangTarunaMember !== "function") {
+          setStatus(memberStatus, "Supabase helper belum tersedia.", true);
+          return;
+        }
+
+        var editId = memberForm.dataset.editId;
+        var name = getInputValue(memberForm, "name");
+        var position = getInputValue(memberForm, "position");
+        var description = getInputValue(memberForm, "description");
+        var file = getFileFromInput(memberFile);
+        var imageUrl = memberForm.dataset.currentImage || "";
+
+        if (!editId && !file) {
+          setStatus(memberStatus, "Pilih foto anggota terlebih dulu.", true);
+          return;
+        }
+
+        if (file) {
+          setStatus(memberStatus, "Mengunggah foto anggota...", false);
+          var uploadResponse = await app.supabase.uploadKarangTarunaImage(file);
+          if (uploadResponse.error) {
+            setStatus(memberStatus, uploadResponse.error, true);
+            return;
+          }
+          imageUrl = uploadResponse.data ? uploadResponse.data.publicUrl : "";
+        }
+
+        var payload = {
+          name: name,
+          position: position,
+          description: description,
+          photo_url: imageUrl,
+          sort_order: 0,
+          is_active: true
+        };
+
+        var response = editId
+          ? await app.supabase.updateKarangTarunaMember(editId, payload)
+          : await app.supabase.createKarangTarunaMember(payload);
+
+        if (response.error) {
+          setStatus(memberStatus, response.error, true);
+          return;
+        }
+
+        resetForm(memberForm, memberSubmit);
+        setPreviewImage(memberPreview, "");
+        setStatus(memberStatus, "Tersimpan.", false);
+        await renderKarangTarunaMembers();
+      });
+    }
+
+    if (memberList) {
+      memberList.addEventListener("click", async function (event) {
+        var editButton = event.target.closest("[data-karang-member-edit]");
+        var deleteButton = event.target.closest("[data-karang-member-delete]");
+        if (!editButton && !deleteButton) {
+          return;
+        }
+
+        var id = (editButton || deleteButton).getAttribute(
+          editButton ? "data-karang-member-edit" : "data-karang-member-delete"
+        );
+
+        if (deleteButton) {
+          if (!window.confirm("Hapus anggota ini?")) {
+            return;
+          }
+          var deleteResponse = await app.supabase.deleteKarangTarunaMember(id);
+          if (deleteResponse.error) {
+            setStatus(memberStatus, deleteResponse.error, true);
+            return;
+          }
+          await renderKarangTarunaMembers();
+          return;
+        }
+
+        var item = state.karangMembers.find(function (row) {
+          return String(row.id) === String(id);
+        });
+        if (!item) {
+          setStatus(memberStatus, "Data tidak ditemukan.", true);
+          return;
+        }
+
+        memberForm.dataset.editId = item.id;
+        memberForm.dataset.currentImage = item.photo_url || "";
+        if (memberSubmit) {
+          memberSubmit.textContent = "Update";
+        }
+        setInputValue(memberForm, "name", item.name || "");
+        setInputValue(memberForm, "position", item.position || "");
+        setInputValue(memberForm, "description", item.description || "");
+        setPreviewImage(memberPreview, item.photo_url || "");
+      });
+    }
+  }
+
+  async function renderKarangTarunaMembers() {
+    var list = $("[data-karang-member-list]");
+    var status = $("[data-karang-member-status]");
+    if (!app.supabase || typeof app.supabase.getKarangTarunaMembers !== "function") {
+      setStatus(status, "Supabase helper belum tersedia.", true);
+      return;
+    }
+
+    setStatus(status, "Memuat anggota Karang Taruna...", false);
+    var response = await app.supabase.getKarangTarunaMembers();
+    if (response.error) {
+      setStatus(status, response.error, true);
+      return;
+    }
+
+    state.karangMembers = response.data || [];
+    if (list) {
+      list.innerHTML = state.karangMembers.map(function (item) {
+        var imageHtml = item.photo_url
+          ? "<img class=\"admin-thumb\" src=\"" + item.photo_url + "\" alt=\"Preview\" />"
+          : "-";
+        return "<tr>" +
+          "<td>" + imageHtml + "</td>" +
+          "<td>" + (item.name || "-") + "</td>" +
+          "<td>" + (item.position || "-") + "</td>" +
+          "<td>" +
+            "<button class=\"admin-link\" data-karang-member-edit=\"" + item.id + "\">Edit</button>" +
+            "<button class=\"admin-link danger\" data-karang-member-delete=\"" + item.id + "\">Hapus</button>" +
+          "</td>" +
+        "</tr>";
+      }).join("");
+    }
+
+    setStatus(status, "", false);
+  }
+
+  async function renderUmkmCatalogAdmin() {
+    await renderUmkmCatalogItems();
+  }
+
+  function bindUmkmCatalogForm() {
+    var form = $("[data-umkm-catalog-form]");
+    var status = $("[data-umkm-catalog-status]");
+    var resetButton = $("[data-umkm-catalog-reset]");
+    var submitButton = $("[data-umkm-catalog-submit]");
+    var list = $("[data-umkm-catalog-list]");
+    var select = $("[data-umkm-catalog-select]");
+    var fileInput = getFileInput(form, "[data-umkm-catalog-file]");
+    var preview = $("[data-umkm-catalog-preview]");
+
+    bindPreview(fileInput, preview);
+
+    if (resetButton && form) {
+      resetButton.addEventListener("click", function () {
+        resetForm(form, submitButton);
+        setStatus(status, "", false);
+      });
+    }
+
+    if (form) {
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        if (!app.supabase || typeof app.supabase.createUmkmCatalogItem !== "function") {
+          setStatus(status, "Supabase helper belum tersedia.", true);
+          return;
+        }
+
+        if (!select || !select.value) {
+          setStatus(status, "Pilih UMKM terlebih dulu.", true);
+          return;
+        }
+
+        var editId = form.dataset.editId;
+        var title = getInputValue(form, "title");
+        var description = getInputValue(form, "description");
+        var priceText = getInputValue(form, "price_text");
+        var file = getFileFromInput(fileInput);
+        var imageUrl = form.dataset.currentImage || "";
+
+        if (!editId && !file) {
+          setStatus(status, "Pilih gambar produk terlebih dulu.", true);
+          return;
+        }
+
+        if (file) {
+          setStatus(status, "Mengunggah gambar produk...", false);
+          var uploadResponse = await app.supabase.uploadUmkmCatalogImage(file);
+          if (uploadResponse.error) {
+            setStatus(status, uploadResponse.error, true);
+            return;
+          }
+          imageUrl = uploadResponse.data ? uploadResponse.data.publicUrl : "";
+        }
+
+        var payload = {
+          umkm_id: select.value,
+          title: title,
+          description: description,
+          price_text: priceText,
+          image_url: imageUrl,
+          sort_order: 0,
+          is_active: true
+        };
+
+        var response = editId
+          ? await app.supabase.updateUmkmCatalogItem(editId, payload)
+          : await app.supabase.createUmkmCatalogItem(payload);
+
+        if (response.error) {
+          setStatus(status, response.error, true);
+          return;
+        }
+
+        resetForm(form, submitButton);
+        setPreviewImage(preview, "");
+        setStatus(status, "Tersimpan.", false);
+        await renderUmkmCatalogItems();
+      });
+    }
+
+    if (list) {
+      list.addEventListener("click", async function (event) {
+        var editButton = event.target.closest("[data-umkm-catalog-edit]");
+        var deleteButton = event.target.closest("[data-umkm-catalog-delete]");
+        if (!editButton && !deleteButton) {
+          return;
+        }
+
+        var id = (editButton || deleteButton).getAttribute(
+          editButton ? "data-umkm-catalog-edit" : "data-umkm-catalog-delete"
+        );
+
+        if (deleteButton) {
+          if (!window.confirm("Hapus item katalog ini?")) {
+            return;
+          }
+          var deleteResponse = await app.supabase.deleteUmkmCatalogItem(id);
+          if (deleteResponse.error) {
+            setStatus(status, deleteResponse.error, true);
+            return;
+          }
+          await renderUmkmCatalogItems();
+          return;
+        }
+
+        var item = state.umkmCatalogItems.find(function (row) {
+          return String(row.id) === String(id);
+        });
+        if (!item) {
+          setStatus(status, "Data tidak ditemukan.", true);
+          return;
+        }
+
+        form.dataset.editId = item.id;
+        form.dataset.currentImage = item.image_url || "";
+        if (submitButton) {
+          submitButton.textContent = "Update";
+        }
+        if (select) {
+          select.value = item.umkm_id || "";
+        }
+        setInputValue(form, "title", item.title || "");
+        setInputValue(form, "description", item.description || "");
+        setInputValue(form, "price_text", item.price_text || "");
+        setPreviewImage(preview, item.image_url || "");
+      });
+    }
+  }
+
+  async function renderUmkmCatalogItems() {
+    var list = $("[data-umkm-catalog-list]");
+    var status = $("[data-umkm-catalog-status]");
+    if (!app.supabase || typeof app.supabase.getUmkmCatalogItems !== "function") {
+      setStatus(status, "Supabase helper belum tersedia.", true);
+      return;
+    }
+
+    setStatus(status, "Memuat katalog UMKM...", false);
+    var response = await app.supabase.getUmkmCatalogItems();
+    if (response.error) {
+      setStatus(status, response.error, true);
+      return;
+    }
+
+    state.umkmCatalogItems = response.data || [];
+    var umkmMap = state.umkmItems.reduce(function (acc, item) {
+      acc[String(item.id)] = item.title || "UMKM";
+      return acc;
+    }, {});
+
+    if (list) {
+      list.innerHTML = state.umkmCatalogItems.map(function (item) {
+        var imageHtml = item.image_url
+          ? "<img class=\"admin-thumb\" src=\"" + item.image_url + "\" alt=\"Preview\" />"
+          : "-";
+        var umkmTitle = umkmMap[String(item.umkm_id)] || "-";
+        return "<tr>" +
+          "<td>" + (item.title || "-") + "</td>" +
+          "<td>" + (item.price_text || "-") + "</td>" +
+          "<td>" + umkmTitle + "</td>" +
+          "<td>" + imageHtml + "</td>" +
+          "<td>" +
+            "<button class=\"admin-link\" data-umkm-catalog-edit=\"" + item.id + "\">Edit</button>" +
+            "<button class=\"admin-link danger\" data-umkm-catalog-delete=\"" + item.id + "\">Hapus</button>" +
+          "</td>" +
+        "</tr>";
+      }).join("");
+    }
+
+    setStatus(status, "", false);
   }
 
   app.admin = {
