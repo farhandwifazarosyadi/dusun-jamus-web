@@ -75,6 +75,17 @@
     return prefix + "-" + Date.now() + "-" + random + ext;
   }
 
+  function normalizeSchemaCacheError(message) {
+    if (!message) {
+      return "";
+    }
+    var text = String(message).toLowerCase();
+    if (text.indexOf("schema cache") !== -1) {
+      return "Data Karang Taruna belum dapat dimuat. Pastikan tabel sudah dibuat dan schema Supabase sudah reload.";
+    }
+    return String(message);
+  }
+
   async function uploadToBucket(bucket, folder, file) {
     var client = getClient();
     if (!client) {
@@ -487,15 +498,15 @@
         var response = await client
           .from("karang_taruna_information")
           .select("id, title, description, structure_image_url")
-          .order("id", { ascending: true })
+          .eq("is_active", true)
           .limit(1)
           .maybeSingle();
         if (response.error) {
-          return emptyItemFallback(response.error.message);
+          return emptyItemFallback(normalizeSchemaCacheError(response.error.message));
         }
         return { data: response.data || null, error: null };
       } catch (error) {
-        return emptyItemFallback(error.message);
+        return emptyItemFallback(normalizeSchemaCacheError(error.message));
       }
     },
     saveKarangTarunaInformation: async function (data) {
@@ -507,16 +518,18 @@
         var existing = await client
           .from("karang_taruna_information")
           .select("id")
+          .eq("is_active", true)
           .limit(1)
           .maybeSingle();
         if (existing.error) {
-          return { data: null, error: existing.error.message };
+          return { data: null, error: normalizeSchemaCacheError(existing.error.message) };
         }
 
         var payload = {
           title: data.title || "",
           description: data.description || "",
-          structure_image_url: data.structure_image_url || ""
+          structure_image_url: data.structure_image_url || "",
+          is_active: true
         };
 
         if (existing.data && existing.data.id) {
@@ -526,7 +539,7 @@
             .eq("id", existing.data.id)
             .select("*");
           if (updateResponse.error) {
-            return { data: null, error: updateResponse.error.message };
+            return { data: null, error: normalizeSchemaCacheError(updateResponse.error.message) };
           }
           return { data: updateResponse.data || null, error: null };
         }
@@ -536,11 +549,11 @@
           .insert([payload])
           .select("*");
         if (insertResponse.error) {
-          return { data: null, error: insertResponse.error.message };
+          return { data: null, error: normalizeSchemaCacheError(insertResponse.error.message) };
         }
         return { data: insertResponse.data || null, error: null };
       } catch (error) {
-        return { data: null, error: error.message };
+        return { data: null, error: normalizeSchemaCacheError(error.message) };
       }
     },
     getKarangTarunaMembers: async function () {
@@ -552,14 +565,15 @@
         var response = await client
           .from("karang_taruna_members")
           .select("id, name, position, photo_url, description, sort_order, is_active")
+          .eq("is_active", true)
           .order("sort_order", { ascending: true })
           .order("id", { ascending: true });
         if (response.error) {
-          return emptyArrayFallback(response.error.message);
+          return emptyArrayFallback(normalizeSchemaCacheError(response.error.message));
         }
         return { data: normalizeItems(response.data), error: null };
       } catch (error) {
-        return emptyArrayFallback(error.message);
+        return emptyArrayFallback(normalizeSchemaCacheError(error.message));
       }
     },
     createKarangTarunaMember: function (data) {

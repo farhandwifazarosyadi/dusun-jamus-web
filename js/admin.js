@@ -31,6 +31,17 @@
     target.classList.toggle("is-error", !!isError);
   }
 
+  function resolveSchemaCacheMessage(errorMessage) {
+    if (!errorMessage) {
+      return "";
+    }
+    var message = String(errorMessage).toLowerCase();
+    if (message.indexOf("schema cache") !== -1) {
+      return "Data Karang Taruna belum dapat dimuat. Pastikan tabel sudah dibuat dan schema Supabase sudah reload.";
+    }
+    return String(errorMessage);
+  }
+
   function slugify(value) {
     return (value || "")
       .toLowerCase()
@@ -837,7 +848,7 @@
     setStatus(status, "Memuat informasi Karang Taruna...", false);
     var response = await app.supabase.getKarangTarunaInformation();
     if (response.error) {
-      setStatus(status, response.error, true);
+      setStatus(status, resolveSchemaCacheMessage(response.error), true);
       return;
     }
 
@@ -847,6 +858,10 @@
     setInputValue(form, "title", info.title || "");
     setInputValue(form, "description", info.description || "");
     setPreviewImage(preview, info.structure_image_url || "");
+    if (!info.id) {
+      setStatus(status, "Data Karang Taruna belum tersedia.", false);
+      return;
+    }
     setStatus(status, "", false);
   }
 
@@ -1036,7 +1051,7 @@
     setStatus(status, "Memuat anggota Karang Taruna...", false);
     var response = await app.supabase.getKarangTarunaMembers();
     if (response.error) {
-      setStatus(status, response.error, true);
+      setStatus(status, resolveSchemaCacheMessage(response.error), true);
       return;
     }
 
@@ -1058,6 +1073,10 @@
       }).join("");
     }
 
+    if (!state.karangMembers.length) {
+      setStatus(status, "Data anggota Karang Taruna belum tersedia.", false);
+      return;
+    }
     setStatus(status, "", false);
   }
 
