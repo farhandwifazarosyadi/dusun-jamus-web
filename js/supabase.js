@@ -302,6 +302,31 @@
     getPotentialBySlug: async function (slug) {
       return selectBySlug("potential_items", slug);
     },
+    getUmkmBySlug: async function (slug) {
+      var client = getClient();
+      if (!client) {
+        return emptyItemFallback("Supabase client belum siap.");
+      }
+      if (!slug) {
+        return emptyItemFallback("Slug tidak valid.");
+      }
+      try {
+        var response = await client
+          .from("potential_items")
+          .select("id, title, image_url, full_description, slug, type, is_active")
+          .eq("slug", slug)
+          .eq("type", "umkm")
+          .eq("is_active", true)
+          .limit(1)
+          .maybeSingle();
+        if (response.error) {
+          return emptyItemFallback(response.error.message);
+        }
+        return { data: response.data || null, error: null };
+      } catch (error) {
+        return emptyItemFallback(error.message);
+      }
+    },
     getActiveFacilityLocations: async function () {
       var response = await selectAll("facility_locations");
       var items = filterByActive(response.data);
@@ -499,6 +524,7 @@
           .from("karang_taruna_information")
           .select("id, title, description, structure_image_url")
           .eq("is_active", true)
+          .order("updated_at", { ascending: false })
           .limit(1)
           .maybeSingle();
         if (response.error) {
@@ -519,6 +545,7 @@
           .from("karang_taruna_information")
           .select("id")
           .eq("is_active", true)
+          .order("updated_at", { ascending: false })
           .limit(1)
           .maybeSingle();
         if (existing.error) {
@@ -567,13 +594,37 @@
           .select("id, name, position, photo_url, description, sort_order, is_active")
           .eq("is_active", true)
           .order("sort_order", { ascending: true })
-          .order("id", { ascending: true });
+          .order("created_at", { ascending: true });
         if (response.error) {
           return emptyArrayFallback(normalizeSchemaCacheError(response.error.message));
         }
         return { data: normalizeItems(response.data), error: null };
       } catch (error) {
         return emptyArrayFallback(normalizeSchemaCacheError(error.message));
+      }
+    },
+    getUmkmCatalogByUmkmId: async function (umkmId) {
+      var client = getClient();
+      if (!client) {
+        return emptyArrayFallback("Supabase client belum siap.");
+      }
+      if (umkmId === null || umkmId === undefined || umkmId === "") {
+        return emptyArrayFallback("ID UMKM tidak valid.");
+      }
+      try {
+        var response = await client
+          .from("umkm_catalog_items")
+          .select("id, umkm_id, title, description, price_text, image_url, sort_order, is_active")
+          .eq("umkm_id", umkmId)
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: true });
+        if (response.error) {
+          return emptyArrayFallback(response.error.message);
+        }
+        return { data: normalizeItems(response.data), error: null };
+      } catch (error) {
+        return emptyArrayFallback(error.message);
       }
     },
     createKarangTarunaMember: function (data) {

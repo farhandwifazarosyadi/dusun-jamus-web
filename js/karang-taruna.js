@@ -1,41 +1,9 @@
-/* karang-taruna.js - Local data for Karang Taruna page */
+/* karang-taruna.js - Karang Taruna public page */
 (function (app) {
   "use strict";
 
-  var STRUCTURE_IMAGE_URL = "https://placehold.co/900x500?text=Struktur+Karang+Taruna";
-
-  var DUMMY_KARANG_TARUNA = [
-    {
-      name: "Nama Ketua",
-      role: "Ketua",
-      photo: "https://placehold.co/300x300?text=Anggota"
-    },
-    {
-      name: "Nama Wakil Ketua",
-      role: "Wakil Ketua",
-      photo: "https://placehold.co/300x300?text=Anggota"
-    },
-    {
-      name: "Nama Sekretaris",
-      role: "Sekretaris",
-      photo: "https://placehold.co/300x300?text=Anggota"
-    },
-    {
-      name: "Nama Bendahara",
-      role: "Bendahara",
-      photo: "https://placehold.co/300x300?text=Anggota"
-    },
-    {
-      name: "Nama Seksi Kegiatan",
-      role: "Seksi Kegiatan",
-      photo: "https://placehold.co/300x300?text=Anggota"
-    },
-    {
-      name: "Nama Seksi Humas",
-      role: "Seksi Humas",
-      photo: "https://placehold.co/300x300?text=Anggota"
-    }
-  ];
+  var FALLBACK_STRUCTURE_IMAGE_URL = "https://placehold.co/900x500?text=Struktur+Karang+Taruna";
+  var FALLBACK_MEMBER_IMAGE_URL = "https://placehold.co/300x300?text=Anggota";
 
   function setStatusVisibility(element, visible) {
     if (!element) {
@@ -52,17 +20,17 @@
     image.className = "karang-photo";
 
     var img = document.createElement("img");
-    img.src = member.photo;
-    img.alt = member.name;
+    img.src = member.photo_url || FALLBACK_MEMBER_IMAGE_URL;
+    img.alt = member.name || "Anggota";
     image.appendChild(img);
 
     var name = document.createElement("h3");
     name.className = "karang-name";
-    name.textContent = member.name;
+    name.textContent = member.name || "Nama Anggota";
 
     var role = document.createElement("p");
     role.className = "karang-role";
-    role.textContent = member.role;
+    role.textContent = member.position || "Anggota";
 
     card.appendChild(image);
     card.appendChild(name);
@@ -71,30 +39,85 @@
     return card;
   }
 
-  app.karangTaruna = {
-    init: function () {
-      var image = document.querySelector("[data-karang-structure-image]");
-      if (image) {
-        image.src = STRUCTURE_IMAGE_URL;
+  function setInfoContent(info) {
+    var title = document.querySelector("[data-karang-info-title]");
+    var description = document.querySelector("[data-karang-info-description]");
+    var image = document.querySelector("[data-karang-structure-image]");
+
+    if (title && info && info.title) {
+      title.textContent = info.title;
+    }
+    if (description) {
+      if (info && info.description) {
+        description.textContent = info.description;
+      } else if (info && info.emptyMessage) {
+        description.textContent = info.emptyMessage;
       }
+    }
+    if (image) {
+      image.src = (info && info.structure_image_url) || FALLBACK_STRUCTURE_IMAGE_URL;
+    }
+  }
 
-      var grid = document.querySelector("[data-karang-members]");
-      var empty = document.querySelector("[data-karang-empty]");
+  async function loadInfo() {
+    if (!app.supabase || typeof app.supabase.getKarangTarunaInformation !== "function") {
+      setInfoContent(null);
+      return { data: null, error: "Supabase helper belum tersedia." };
+    }
 
-      if (!grid) {
-        return;
-      }
+    var response = await app.supabase.getKarangTarunaInformation();
+    if (response.error) {
+      setInfoContent({ emptyMessage: "Informasi Karang Taruna belum tersedia." });
+      return response;
+    }
 
-      if (!DUMMY_KARANG_TARUNA.length) {
-        setStatusVisibility(empty, true);
-        return;
-      }
+    if (!response.data) {
+      setInfoContent({ emptyMessage: "Informasi Karang Taruna belum tersedia." });
+      return response;
+    }
 
+    setInfoContent(response.data || null);
+    return response;
+  }
+
+  async function loadMembers() {
+    var grid = document.querySelector("[data-karang-members]");
+    var empty = document.querySelector("[data-karang-empty]");
+
+    if (!grid) {
+      return { data: [], error: null };
+    }
+
+    if (!app.supabase || typeof app.supabase.getKarangTarunaMembers !== "function") {
+      setStatusVisibility(empty, true);
+      return { data: [], error: "Supabase helper belum tersedia." };
+    }
+
+    var response = await app.supabase.getKarangTarunaMembers();
+    if (response.error) {
+      setStatusVisibility(empty, true);
+      return response;
+    }
+
+    var members = response.data || [];
+    if (!members.length) {
       grid.innerHTML = "";
-      DUMMY_KARANG_TARUNA.forEach(function (member) {
-        grid.appendChild(createMemberCard(member));
-      });
-      setStatusVisibility(empty, false);
+      setStatusVisibility(empty, true);
+      return response;
+    }
+
+    grid.innerHTML = "";
+    members.forEach(function (member) {
+      grid.appendChild(createMemberCard(member));
+    });
+    setStatusVisibility(empty, false);
+    return response;
+  }
+
+  app.karangTaruna = {
+    init: async function () {
+      await loadInfo();
+      await loadMembers();
     }
   };
 })(window.DusunJamus = window.DusunJamus || {});
