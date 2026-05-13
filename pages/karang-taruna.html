@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Detail UMKM Dusun Jamus</title>
+    <title>Karang Taruna Dusun Jamus</title>
     <link rel="stylesheet" href="../css/base.css" />
     <link rel="stylesheet" href="../css/components.css" />
     <link rel="stylesheet" href="../css/pages.css" />
@@ -12,11 +12,10 @@
     <script defer src="../js/config.js"></script>
     <script defer src="../js/supabase.js"></script>
     <script defer src="../js/navigation.js"></script>
-    <script defer src="../js/potentials.js"></script>
-    <script defer src="../js/umkm-catalog.js"></script>
+    <script defer src="../js/karang-taruna.js"></script>
     <script defer src="../js/main.js"></script>
   </head>
-  <body class="page page-umkm-detail">
+  <body class="page page-karang-taruna">
     <header class="site-header" id="header">
       <div class="container">
         <div class="header-inner">
@@ -49,39 +48,49 @@
     <main>
       <section class="section page-hero">
         <div class="container">
-          <h1 class="section-title">Detail UMKM</h1>
-          <p class="section-subtitle">Informasi lengkap produk UMKM Dusun Jamus.</p>
+          <h1 class="section-title">Karang Taruna</h1>
+          <p class="section-subtitle">Informasi organisasi pemuda Dusun Jamus.</p>
         </div>
       </section>
 
-      <section class="section detail-section detail-page" data-umkm-detail>
+      <section class="section karang-structure-section">
         <div class="container">
-          <div class="detail-layout">
-            <div class="detail-media">
-              <div class="detail-image" data-detail-image>
-                <span>Gambar UMKM</span>
-              </div>
-            </div>
-            <article class="detail-card">
-              <h2 class="detail-title" data-detail-title>Nama UMKM</h2>
-              <p class="detail-description" data-detail-description>
-                Deskripsi lengkap UMKM akan ditampilkan di sini.
-              </p>
-            </article>
+          <div class="karang-structure-header">
+            <h2 class="section-title">Struktur Organisasi</h2>
+            <p class="section-subtitle">Susunan pengurus Karang Taruna Dusun Jamus.</p>
           </div>
-          <p class="detail-status" data-detail-loading>Memuat detail UMKM...</p>
-          <p class="detail-status" data-detail-empty>Data UMKM belum tersedia.</p>
+          <div class="karang-structure-card">
+            <img
+              class="karang-structure-image"
+              alt="Struktur organisasi Karang Taruna"
+              data-karang-structure-image
+            />
+          </div>
         </div>
       </section>
 
-      <section class="section catalog-section" data-umkm-catalog>
+      <section class="section karang-members-section">
         <div class="container">
-          <div class="catalog-header">
-            <h2 class="section-title">Katalog Produk</h2>
-            <p class="section-subtitle">Daftar produk UMKM berdasarkan detail yang dipilih.</p>
+          <div class="karang-members-header">
+            <h2 class="section-title">Pengurus &amp; Anggota</h2>
+            <p class="section-subtitle">Daftar inti pengurus dan divisi Karang Taruna.</p>
           </div>
-          <div class="catalog-grid" data-umkm-catalog-grid></div>
-          <p class="catalog-status" data-umkm-catalog-empty>Katalog produk belum tersedia.</p>
+          <div class="karang-grid" data-karang-members></div>
+          <p class="karang-status" data-karang-empty>Data pengurus belum tersedia.</p>
+        </div>
+      </section>
+
+      <section class="section karang-info-section">
+        <div class="container">
+          <div class="karang-info-card">
+            <h2 class="section-title">Tentang Karang Taruna Dusun Jamus</h2>
+            <p>
+              Karang Taruna Dusun Jamus adalah wadah pengembangan generasi muda untuk
+              berkarya, berkolaborasi, dan menggerakkan kegiatan sosial di lingkungan desa.
+              Kegiatan meliputi penguatan solidaritas, pemberdayaan ekonomi, serta aksi
+              gotong royong yang mendukung program desa.
+            </p>
+          </div>
         </div>
       </section>
     </main>

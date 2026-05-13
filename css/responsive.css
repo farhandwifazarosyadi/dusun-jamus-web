@@ -66,6 +66,14 @@
     grid-template-columns: 1fr;
   }
 
+  .catalog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .karang-grid {
+    grid-template-columns: 1fr;
+  }
+
   .detail-layout {
     grid-template-columns: 1fr;
   }

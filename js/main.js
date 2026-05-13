@@ -57,6 +57,8 @@
       safeInit(app.news, "news");
       safeInit(app.gallery, "gallery");
       safeInit(app.potentials, "potentials");
+      safeInit(app.karangTaruna, "karangTaruna");
+      safeInit(app.umkmCatalog, "umkmCatalog");
       safeInit(app.maps, "maps");
       safeInit(app.weather, "weather");
       safeInit(app.clock, "clock");
