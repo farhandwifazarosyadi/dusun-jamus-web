@@ -358,6 +358,41 @@
   min-height: 280px;
 }
 
+.places-card {
+  margin-top: var(--space-3);
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: var(--space-3);
+  box-shadow: var(--shadow-sm);
+}
+
+.places-title {
+  margin: 0 0 var(--space-2);
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.places-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.places-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.places-meta {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
 .calendar-card {
   margin-top: var(--space-3);
   background: var(--color-surface);

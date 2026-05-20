@@ -5,10 +5,6 @@
   var LOCATION_CONFIG = {
     name: "Dusun Jamus",
     fullAddress: "Dusun Jamus, Kecamatan Pengasih, Kabupaten Kulon Progo, DIY",
-    district: "Pengasih",
-    regency: "Kulon Progo",
-    province: "Daerah Istimewa Yogyakarta",
-    postalCode: "55652",
     latitude: -7.83552,
     longitude: 110.17035,
     timezone: "Asia/Jakarta"
@@ -27,14 +23,14 @@
   app.config = {
     supabaseUrl: "https://kppzjxxgdnqqvrqqpswx.supabase.co",
     supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwcHpqeHhnZG5xcXZycXFwc3d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2ODEyMjksImV4cCI6MjA5MjI1NzIyOX0.QZlCKTXuJ6LoCLPty_RTTV_5RtM1CUzyrhlaSbUUukQ",
-    googleMapsApiKey: "YOUR_GOOGLE_MAPS_API_KEY",
     openWeatherApiKey: "YOUR_OPENWEATHER_API_KEY",
+    foursquareApiKey: "YOUR_FOURSQUARE_API_KEY",
     location: LOCATION_CONFIG,
     normalize: function () {
       app.config.supabaseUrl = normalizeValue(app.config.supabaseUrl);
       app.config.supabaseAnonKey = normalizeValue(app.config.supabaseAnonKey);
-      app.config.googleMapsApiKey = normalizeValue(app.config.googleMapsApiKey);
       app.config.openWeatherApiKey = normalizeValue(app.config.openWeatherApiKey);
+      app.config.foursquareApiKey = normalizeValue(app.config.foursquareApiKey);
     },
     get: function (key) {
       return normalizeValue(app.config[key]);
@@ -48,8 +44,8 @@
 
     app.config.supabaseUrl = env.SUPABASE_URL || app.config.supabaseUrl;
     app.config.supabaseAnonKey = env.SUPABASE_ANON_KEY || app.config.supabaseAnonKey;
-    app.config.googleMapsApiKey = env.GOOGLE_MAPS_API_KEY || app.config.googleMapsApiKey;
     app.config.openWeatherApiKey = env.OPENWEATHER_API_KEY || app.config.openWeatherApiKey;
+    app.config.foursquareApiKey = env.FOURSQUARE_API_KEY || app.config.foursquareApiKey;
     app.config.normalize();
   };
 

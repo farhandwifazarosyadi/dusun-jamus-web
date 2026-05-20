@@ -1,8 +1,7 @@
-/* maps.js - Google Maps integration and contact data */
+/* maps.js - Leaflet + OpenStreetMap integration and contact data */
 (function (app) {
   "use strict";
 
-  var mapsLoader = null;
   var locationConfig = app.config && app.config.location ? app.config.location : null;
   var defaultLat = locationConfig && typeof locationConfig.latitude === "number"
     ? locationConfig.latitude
@@ -36,6 +35,40 @@
     if (status) {
       status.classList.toggle("is-hidden", !visible);
     }
+  }
+
+  function updatePlacesFallback(text) {
+    var fallback = document.querySelector("[data-places-fallback]");
+    if (fallback) {
+      fallback.textContent = text;
+    }
+  }
+
+  function renderPlacesList(items) {
+    var list = document.querySelector("[data-places-list]");
+    if (!list) {
+      return;
+    }
+    list.innerHTML = "";
+    if (!items || !items.length) {
+      updatePlacesFallback("Data tempat sekitar belum tersedia.");
+      return;
+    }
+    updatePlacesFallback("Tempat sekitar:");
+    items.forEach(function (item) {
+      var li = document.createElement("li");
+      var name = document.createElement("span");
+      name.className = "places-name";
+      name.textContent = item.name || "Tempat";
+      li.appendChild(name);
+      if (item.distance) {
+        var meta = document.createElement("span");
+        meta.className = "places-meta";
+        meta.textContent = " " + item.distance;
+        li.appendChild(meta);
+      }
+      list.appendChild(li);
+    });
   }
 
   function isValidCoordinate(value, min, max) {
@@ -84,83 +117,78 @@
     });
   }
 
-  function loadGoogleMaps(apiKey) {
-    if (window.google && window.google.maps) {
-      return Promise.resolve(window.google.maps);
-    }
-    if (mapsLoader) {
-      return mapsLoader;
-    }
-
-    mapsLoader = new Promise(function (resolve, reject) {
-      var script = document.createElement("script");
-      script.src = "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(apiKey);
-      script.async = true;
-      script.defer = true;
-      script.onload = function () {
-        if (window.google && window.google.maps) {
-          resolve(window.google.maps);
-        } else {
-          reject(new Error("Google Maps gagal dimuat."));
-        }
-      };
-      script.onerror = function () {
-        reject(new Error("Google Maps gagal dimuat."));
-      };
-      document.head.appendChild(script);
-    });
-
-    return mapsLoader;
-  }
-
-  function renderContactMap(container, apiKey, label, lat, lng) {
+  function renderContactMap(container, label, lat, lng) {
     if (!container) {
       return;
     }
-    if (!apiKey) {
+
+    if (!window.L) {
       updateMapPlaceholder("Lokasi: " + defaultAddress + ". Peta belum tersedia.");
       return;
     }
 
-    var center = {
-      lat: isValidCoordinate(lat, -90, 90) ? parseFloat(lat) : defaultLat,
-      lng: isValidCoordinate(lng, -180, 180) ? parseFloat(lng) : defaultLng
-    };
-    var title = label || defaultName;
+    var center = [
+      isValidCoordinate(lat, -90, 90) ? parseFloat(lat) : defaultLat,
+      isValidCoordinate(lng, -180, 180) ? parseFloat(lng) : defaultLng
+    ];
+    var popupText = label || defaultAddress;
 
-    container.innerHTML = "<div class=\"map-canvas\"></div>";
+    container.innerHTML = "<div class=\"map-canvas\" aria-label=\"Peta Dusun Jamus\"></div>";
     var canvas = container.querySelector(".map-canvas");
     if (!canvas) {
       updateMapPlaceholder("Peta belum tersedia.");
       return;
     }
 
-    loadGoogleMaps(apiKey)
-      .then(function () {
-        var map = new window.google.maps.Map(canvas, {
-          center: center,
-          zoom: 15,
-          zoomControl: true,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false
-        });
-        var marker = new window.google.maps.Marker({
-          position: center,
-          map: map,
-          title: defaultName
-        });
-        var infoWindow = new window.google.maps.InfoWindow({
-          content: "<div><strong>" + defaultName + "</strong><br />" + defaultAddress + "</div>"
-        });
-        infoWindow.open(map, marker);
-        marker.addListener("click", function () {
-          infoWindow.open(map, marker);
-        });
-      })
-      .catch(function () {
-        updateMapPlaceholder("Lokasi: " + defaultAddress + ". Peta belum tersedia.");
+    var map = window.L.map(canvas, {
+      zoomControl: true,
+      scrollWheelZoom: true
+    }).setView(center, 15);
+
+    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
+      maxZoom: 19
+    }).addTo(map);
+
+    window.L.marker(center)
+      .addTo(map)
+      .bindPopup(popupText)
+      .openPopup();
+  }
+
+  async function searchNearbyPlaces(apiKey, lat, lng) {
+    if (!apiKey) {
+      updatePlacesFallback("Data tempat sekitar belum tersedia.");
+      return;
+    }
+
+    var url = "https://api.foursquare.com/v3/places/search?ll=" +
+      encodeURIComponent(lat + "," + lng) + "&radius=1000&limit=5";
+
+    try {
+      var response = await fetch(url, {
+        headers: {
+          Authorization: apiKey,
+          Accept: "application/json"
+        }
       });
+      if (!response.ok) {
+        updatePlacesFallback("Data tempat sekitar belum tersedia.");
+        return;
+      }
+      var data = await response.json();
+      var results = data && data.results ? data.results : [];
+      var mapped = results.map(function (item) {
+        var distance = item.distance ? Math.round(item.distance) + " m" : "";
+        return {
+          name: item.name,
+          distance: distance
+        };
+      });
+      renderPlacesList(mapped);
+    } catch (error) {
+      updatePlacesFallback("Data tempat sekitar belum tersedia.");
+    }
   }
 
   async function fetchContactData(client) {
@@ -180,18 +208,11 @@
   app.maps = {
     init: async function () {
       var apiKey = app.config && typeof app.config.get === "function"
-        ? app.config.get("googleMapsApiKey")
+        ? app.config.get("foursquareApiKey")
         : "";
-
-      if (!apiKey) {
-        updateMapPlaceholder("Lokasi: " + defaultAddress + ". Peta belum tersedia.");
-      }
 
       var contactSection = document.querySelector("[data-contact-section]");
       if (!contactSection) {
-        if (!apiKey) {
-          console.warn("Google Maps API key belum diisi.");
-        }
         return;
       }
 
@@ -199,12 +220,16 @@
 
       if (!app.supabase || typeof app.supabase.initClient !== "function") {
         updateContactStatus(false);
+        renderContactMap(document.querySelector("[data-contact-map]"), defaultAddress, defaultLat, defaultLng);
+        updatePlacesFallback("Data tempat sekitar belum tersedia.");
         return;
       }
 
       var client = app.supabase.initClient();
       if (!client) {
         updateContactStatus(false);
+        renderContactMap(document.querySelector("[data-contact-map]"), defaultAddress, defaultLat, defaultLng);
+        updatePlacesFallback("Data tempat sekitar belum tersedia.");
         return;
       }
 
@@ -251,7 +276,11 @@
         lng: lng
       };
 
-      renderContactMap(document.querySelector("[data-contact-map]"), apiKey, address, lat, lng);
+      renderContactMap(document.querySelector("[data-contact-map]"), address, lat, lng);
+      updatePlacesFallback("Data tempat sekitar belum tersedia.");
+      if (apiKey) {
+        searchNearbyPlaces(apiKey, lat, lng);
+      }
     },
     renderPreview: function () {
       return;
