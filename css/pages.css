@@ -342,6 +342,14 @@
   min-height: 280px;
   border-radius: 16px;
   overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: var(--color-surface);
+}
+
+.map-frame p {
+  margin: 0;
+  padding: var(--space-3);
+  color: var(--color-muted);
 }
 
 .map-frame .map-canvas {
