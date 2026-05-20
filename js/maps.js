@@ -37,10 +37,10 @@
     }
   }
 
-  function updatePlacesFallback(text) {
-    var fallback = document.querySelector("[data-places-fallback]");
-    if (fallback) {
-      fallback.textContent = text;
+  function setPlacesVisibility(visible) {
+    var card = document.querySelector("[data-places-card]");
+    if (card) {
+      card.classList.toggle("is-hidden", !visible);
     }
   }
 
@@ -51,10 +51,10 @@
     }
     list.innerHTML = "";
     if (!items || !items.length) {
-      updatePlacesFallback("Data tempat sekitar belum tersedia.");
+      setPlacesVisibility(false);
       return;
     }
-    updatePlacesFallback("Tempat sekitar:");
+    setPlacesVisibility(true);
     items.forEach(function (item) {
       var li = document.createElement("li");
       var name = document.createElement("span");
@@ -158,7 +158,7 @@
 
   async function searchNearbyPlaces(apiKey, lat, lng) {
     if (!apiKey) {
-      updatePlacesFallback("Data tempat sekitar belum tersedia.");
+      setPlacesVisibility(false);
       return;
     }
 
@@ -173,7 +173,7 @@
         }
       });
       if (!response.ok) {
-        updatePlacesFallback("Data tempat sekitar belum tersedia.");
+        setPlacesVisibility(false);
         return;
       }
       var data = await response.json();
@@ -187,14 +187,23 @@
       });
       renderPlacesList(mapped);
     } catch (error) {
-      updatePlacesFallback("Data tempat sekitar belum tersedia.");
+      setPlacesVisibility(false);
     }
   }
 
   async function fetchContactData(client) {
     try {
-      var contacts = await client.from("site_contacts").select("*").limit(1);
-      var socials = await client.from("site_social_links").select("*");
+      var contacts = await client
+        .from("site_contacts")
+        .select("*")
+        .eq("is_active", true)
+        .order("updated_at", { ascending: false })
+        .limit(1);
+      var socials = await client
+        .from("site_social_links")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
       return {
         contact: contacts.data && contacts.data[0] ? contacts.data[0] : null,
         socials: socials.data || [],
@@ -221,7 +230,7 @@
       if (!app.supabase || typeof app.supabase.initClient !== "function") {
         updateContactStatus(false);
         renderContactMap(document.querySelector("[data-contact-map]"), defaultAddress, defaultLat, defaultLng);
-        updatePlacesFallback("Data tempat sekitar belum tersedia.");
+        setPlacesVisibility(false);
         return;
       }
 
@@ -229,7 +238,7 @@
       if (!client) {
         updateContactStatus(false);
         renderContactMap(document.querySelector("[data-contact-map]"), defaultAddress, defaultLat, defaultLng);
-        updatePlacesFallback("Data tempat sekitar belum tersedia.");
+        setPlacesVisibility(false);
         return;
       }
 
@@ -277,7 +286,7 @@
       };
 
       renderContactMap(document.querySelector("[data-contact-map]"), address, lat, lng);
-      updatePlacesFallback("Data tempat sekitar belum tersedia.");
+      setPlacesVisibility(false);
       if (apiKey) {
         searchNearbyPlaces(apiKey, lat, lng);
       }

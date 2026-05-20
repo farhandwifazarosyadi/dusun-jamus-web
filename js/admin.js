@@ -59,12 +59,25 @@
     return field.value.trim();
   }
 
+  function getCheckboxValue(form, name) {
+    var field = form.querySelector("[name=\"" + name + "\"]");
+    return field ? field.checked : false;
+  }
+
   function setInputValue(form, name, value) {
     var field = form.querySelector("[name=\"" + name + "\"]");
     if (!field) {
       return;
     }
     field.value = value == null ? "" : value;
+  }
+
+  function setCheckboxValue(form, name, value) {
+    var field = form.querySelector("[name=\"" + name + "\"]");
+    if (!field) {
+      return;
+    }
+    field.checked = value === true;
   }
 
   function resetForm(form, submitButton) {
@@ -133,7 +146,8 @@
   var state = {
     umkmItems: [],
     karangMembers: [],
-    umkmCatalogItems: []
+    umkmCatalogItems: [],
+    socialLinks: []
   };
 
   async function initAdminPage() {
@@ -177,6 +191,8 @@
 
     await loadLandingItems();
     await loadAboutProfile();
+    await loadContactInfo();
+    await loadSocialLinks();
     await loadGalleryItems();
     await loadUmkmItems();
     await renderKarangTarunaAdmin();
@@ -244,6 +260,7 @@
     bindAdminTabs();
     bindLandingModule();
     bindAboutModule();
+    bindContactModule();
     bindGalleryModule();
     bindUmkmModule();
     bindUmkmDetailModule();
@@ -319,6 +336,182 @@
       }
       setStatus(status, "Tersimpan.", false);
     });
+  }
+
+  async function loadContactInfo() {
+    var form = $("[data-contact-form]");
+    var status = $("[data-contact-status]");
+    if (!form) {
+      return;
+    }
+    if (!app.supabase || typeof app.supabase.getActiveSiteContact !== "function") {
+      setStatus(status, "Supabase helper belum tersedia.", true);
+      return;
+    }
+
+    setStatus(status, "Memuat data kontak...", false);
+    var response = await app.supabase.getActiveSiteContact();
+    if (response.error) {
+      setStatus(status, response.error, true);
+      return;
+    }
+
+    var contact = response.data || {};
+    form.dataset.contactId = contact.id || "";
+    setInputValue(form, "address", contact.address || "");
+    setInputValue(form, "phone", contact.phone || "");
+    setInputValue(form, "whatsapp", contact.whatsapp || "");
+    setInputValue(form, "email", contact.email || "");
+    setStatus(status, "", false);
+  }
+
+  async function loadSocialLinks() {
+    var list = $("[data-contact-social-list]");
+    var status = $("[data-contact-social-status]");
+    if (!app.supabase || typeof app.supabase.getSiteSocialLinks !== "function") {
+      setStatus(status, "Supabase helper belum tersedia.", true);
+      return;
+    }
+
+    setStatus(status, "Memuat media sosial...", false);
+    var response = await app.supabase.getSiteSocialLinks();
+    if (response.error) {
+      setStatus(status, response.error, true);
+      return;
+    }
+
+    state.socialLinks = response.data || [];
+    if (list) {
+      list.innerHTML = state.socialLinks.map(function (item) {
+        var activeLabel = item.is_active ? "Ya" : "Tidak";
+        return "<tr>" +
+          "<td>" + (item.platform || "-") + "</td>" +
+          "<td>" + (item.label || "-") + "</td>" +
+          "<td>" + (item.url || "-") + "</td>" +
+          "<td>" + activeLabel + "</td>" +
+          "<td>" +
+            "<button class=\"admin-link\" data-contact-social-edit=\"" + item.id + "\">Edit</button>" +
+            "<button class=\"admin-link danger\" data-contact-social-delete=\"" + item.id + "\">Hapus</button>" +
+          "</td>" +
+        "</tr>";
+      }).join("");
+    }
+
+    setStatus(status, "", false);
+  }
+
+  function bindContactModule() {
+    var contactForm = $("[data-contact-form]");
+    var contactStatus = $("[data-contact-status]");
+    var socialForm = $("[data-contact-social-form]");
+    var socialStatus = $("[data-contact-social-status]");
+    var socialReset = $("[data-contact-social-reset]");
+    var socialList = $("[data-contact-social-list]");
+
+    if (contactForm) {
+      contactForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        if (!app.supabase || typeof app.supabase.saveSiteContact !== "function") {
+          setStatus(contactStatus, "Supabase helper belum tersedia.", true);
+          return;
+        }
+
+        var payload = {
+          address: getInputValue(contactForm, "address"),
+          phone: getInputValue(contactForm, "phone"),
+          whatsapp: getInputValue(contactForm, "whatsapp"),
+          email: getInputValue(contactForm, "email")
+        };
+
+        setStatus(contactStatus, "Menyimpan kontak...", false);
+        var response = await app.supabase.saveSiteContact(payload);
+        if (response.error) {
+          setStatus(contactStatus, response.error, true);
+          return;
+        }
+        setStatus(contactStatus, "Kontak tersimpan.", false);
+        await loadContactInfo();
+      });
+    }
+
+    if (socialReset && socialForm) {
+      socialReset.addEventListener("click", function () {
+        resetForm(socialForm);
+        setCheckboxValue(socialForm, "is_active", true);
+      });
+    }
+
+    if (socialForm) {
+      socialForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        if (!app.supabase || typeof app.supabase.createSiteSocialLink !== "function") {
+          setStatus(socialStatus, "Supabase helper belum tersedia.", true);
+          return;
+        }
+
+        var editId = socialForm.dataset.editId;
+        var payload = {
+          platform: getInputValue(socialForm, "platform"),
+          label: getInputValue(socialForm, "label"),
+          url: getInputValue(socialForm, "url"),
+          icon_name: getInputValue(socialForm, "icon_name"),
+          sort_order: parseInt(getInputValue(socialForm, "sort_order"), 10),
+          is_active: getCheckboxValue(socialForm, "is_active")
+        };
+
+        setStatus(socialStatus, "Menyimpan media sosial...", false);
+        var response = editId
+          ? await app.supabase.updateSiteSocialLink(editId, payload)
+          : await app.supabase.createSiteSocialLink(payload);
+        if (response.error) {
+          setStatus(socialStatus, response.error, true);
+          return;
+        }
+
+        resetForm(socialForm);
+        setCheckboxValue(socialForm, "is_active", true);
+        setStatus(socialStatus, "Media sosial tersimpan.", false);
+        await loadSocialLinks();
+      });
+    }
+
+    if (socialList) {
+      socialList.addEventListener("click", async function (event) {
+        var editButton = event.target.closest("[data-contact-social-edit]");
+        var deleteButton = event.target.closest("[data-contact-social-delete]");
+        if (!editButton && !deleteButton) {
+          return;
+        }
+
+        var id = (editButton || deleteButton).getAttribute(editButton ? "data-contact-social-edit" : "data-contact-social-delete");
+        if (deleteButton) {
+          if (!window.confirm("Hapus media sosial ini?")) {
+            return;
+          }
+          var deleteResponse = await app.supabase.deleteSiteSocialLink(id);
+          if (deleteResponse.error) {
+            setStatus(socialStatus, deleteResponse.error, true);
+            return;
+          }
+          await loadSocialLinks();
+          return;
+        }
+
+        var item = state.socialLinks.find(function (row) { return String(row.id) === String(id); });
+        if (!item) {
+          setStatus(socialStatus, "Data tidak ditemukan.", true);
+          return;
+        }
+        socialForm.dataset.editId = item.id;
+        setInputValue(socialForm, "platform", item.platform);
+        setInputValue(socialForm, "label", item.label);
+        setInputValue(socialForm, "url", item.url);
+        setInputValue(socialForm, "icon_name", item.icon_name);
+        setInputValue(socialForm, "sort_order", item.sort_order);
+        setCheckboxValue(socialForm, "is_active", item.is_active === true);
+        setStatus(socialStatus, "", false);
+      });
+    }
   }
 
   async function loadLandingItems() {
@@ -680,6 +873,7 @@
         var payload = {
           title: title,
           image_url: imageUrl,
+          maps_url: getInputValue(form, "maps_url"),
           slug: slugify(title)
         };
 
@@ -730,6 +924,7 @@
           submitButton.textContent = "Update";
         }
         setInputValue(form, "title", item.title);
+        setInputValue(form, "maps_url", item.maps_url);
         setPreviewImage(preview, item.image_url || "");
       });
     }
@@ -777,6 +972,7 @@
         }
         var item = response.data;
         setInputValue(form, "title", item.title);
+        setInputValue(form, "maps_url", item.maps_url);
         form.dataset.currentImage = item.image_url || "";
         setPreviewImage(preview, item.image_url || "");
         setInputValue(form, "full_description", item.full_description);
@@ -814,6 +1010,7 @@
           title: title,
           image_url: imageUrl,
           full_description: getInputValue(form, "full_description"),
+          maps_url: getInputValue(form, "maps_url"),
           slug: slugify(title)
         };
 

@@ -671,6 +671,31 @@
   box-shadow: var(--shadow-sm);
 }
 
+.detail-location {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: var(--space-1);
+}
+
+.detail-location-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--color-button-primary);
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  width: fit-content;
+}
+
+.detail-location-empty {
+  color: var(--color-muted);
+  margin: 0;
+}
+
 .detail-title {
   margin-bottom: var(--space-2);
 }

@@ -263,8 +263,109 @@
     getSiteContacts: async function () {
       return selectAll("site_contacts");
     },
+    getActiveSiteContact: async function () {
+      var client = getClient();
+      if (!client) {
+        return emptyItemFallback("Supabase client belum siap.");
+      }
+      try {
+        var response = await client
+          .from("site_contacts")
+          .select("id, address, phone, whatsapp, email, is_active")
+          .eq("is_active", true)
+          .order("updated_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (response.error) {
+          return emptyItemFallback(response.error.message);
+        }
+        return { data: response.data || null, error: null };
+      } catch (error) {
+        return emptyItemFallback(error.message);
+      }
+    },
+    saveSiteContact: async function (data) {
+      var client = getClient();
+      if (!client) {
+        return { data: null, error: "Supabase client belum siap." };
+      }
+      try {
+        var existing = await client
+          .from("site_contacts")
+          .select("id")
+          .eq("is_active", true)
+          .order("updated_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (existing.error) {
+          return { data: null, error: existing.error.message };
+        }
+
+        var payload = {
+          address: data.address || "",
+          phone: data.phone || "",
+          whatsapp: data.whatsapp || "",
+          email: data.email || "",
+          is_active: true
+        };
+
+        if (existing.data && existing.data.id) {
+          var updateResponse = await client
+            .from("site_contacts")
+            .update(payload)
+            .eq("id", existing.data.id)
+            .select("*");
+          if (updateResponse.error) {
+            return { data: null, error: updateResponse.error.message };
+          }
+          return { data: updateResponse.data || null, error: null };
+        }
+
+        var insertResponse = await client
+          .from("site_contacts")
+          .insert([payload])
+          .select("*");
+        if (insertResponse.error) {
+          return { data: null, error: insertResponse.error.message };
+        }
+        return { data: insertResponse.data || null, error: null };
+      } catch (error) {
+        return { data: null, error: error.message };
+      }
+    },
     getSiteSocialLinks: async function () {
       return selectAll("site_social_links");
+    },
+    createSiteSocialLink: function (data) {
+      var payload = {
+        platform: data.platform || "",
+        label: data.label || "",
+        url: data.url || "",
+        icon_name: data.icon_name || "",
+        sort_order: Number.isFinite(data.sort_order) ? data.sort_order : 0,
+        is_active: data.is_active !== false
+      };
+      return writeData("site_social_links", function (client) {
+        return client.from("site_social_links").insert([payload]).select("*");
+      });
+    },
+    updateSiteSocialLink: function (id, data) {
+      var payload = {
+        platform: data.platform || "",
+        label: data.label || "",
+        url: data.url || "",
+        icon_name: data.icon_name || "",
+        sort_order: Number.isFinite(data.sort_order) ? data.sort_order : 0,
+        is_active: data.is_active !== false
+      };
+      return writeData("site_social_links", function (client) {
+        return client.from("site_social_links").update(payload).eq("id", id).select("*");
+      });
+    },
+    deleteSiteSocialLink: function (id) {
+      return writeData("site_social_links", function (client) {
+        return client.from("site_social_links").delete().eq("id", id).select("*");
+      });
     },
     getHeroSlides: async function () {
       return selectAll("hero_slides");
@@ -313,7 +414,7 @@
       try {
         var response = await client
           .from("potential_items")
-          .select("id, title, image_url, full_description, slug, type, is_active")
+          .select("id, title, image_url, full_description, slug, type, is_active, maps_url")
           .eq("slug", slug)
           .eq("type", "umkm")
           .eq("is_active", true)
@@ -376,7 +477,7 @@
       try {
         var response = await client
           .from("potential_items")
-          .select("id, title, image_url, full_description, slug, type")
+          .select("id, title, image_url, full_description, slug, type, maps_url")
           .eq("type", "umkm")
           .order("id", { ascending: false });
         if (response.error) {
@@ -398,7 +499,7 @@
       try {
         var response = await client
           .from("potential_items")
-          .select("id, title, image_url, full_description, slug, type")
+          .select("id, title, image_url, full_description, slug, type, maps_url")
           .eq("id", id)
           .eq("type", "umkm")
           .maybeSingle();
@@ -489,6 +590,7 @@
       var payload = {
         title: data.title || "",
         image_url: data.image_url || "",
+        maps_url: data.maps_url || "",
         type: "umkm",
         slug: data.slug || slugify(data.title || ""),
         is_active: true
@@ -502,6 +604,7 @@
         title: data.title || "",
         image_url: data.image_url || "",
         full_description: data.full_description || null,
+        maps_url: data.maps_url || "",
         type: "umkm",
         slug: data.slug || slugify(data.title || "")
       };

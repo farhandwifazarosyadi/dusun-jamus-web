@@ -126,6 +126,25 @@
       );
     }
 
+    var mapsLink = section.querySelector("[data-detail-maps-link]");
+    var mapsEmpty = section.querySelector("[data-detail-maps-empty]");
+    var mapsUrl = pickValue(item, ["maps_url", "mapsUrl"], "");
+    if (mapsLink) {
+      if (mapsUrl) {
+        mapsLink.href = mapsUrl;
+        mapsLink.classList.remove("is-hidden");
+        if (mapsEmpty) {
+          mapsEmpty.classList.add("is-hidden");
+        }
+      } else {
+        mapsLink.removeAttribute("href");
+        mapsLink.classList.add("is-hidden");
+        if (mapsEmpty) {
+          mapsEmpty.classList.remove("is-hidden");
+        }
+      }
+    }
+
     if (image) {
       var imageUrl = pickValue(item, ["image_url", "imageUrl", "photo_url", "thumbnail_url"], "");
       image.innerHTML = "";
