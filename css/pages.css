@@ -328,6 +328,23 @@
   font-size: 0.9rem;
 }
 
+.weather-feels,
+.weather-rain,
+.weather-wind {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.weather-forecast {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-2) 0 0;
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
 .clock-time {
   font-size: 1.6rem;
   font-weight: 700;
