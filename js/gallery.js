@@ -100,8 +100,8 @@
 
     track.innerHTML = "";
     items.forEach(function (item, index) {
-      var title = item.title || "Foto Desa";
-      var slide = createSlide(item, title || "Foto Desa");
+      var title = item.title || "Foto Dusun";
+      var slide = createSlide(item, title || "Foto Dusun");
       slide.setAttribute("data-index", String(index));
       track.appendChild(slide);
     });
@@ -142,7 +142,7 @@
       try {
         var response = await app.supabase.getActiveGalleryItems(9);
         if (!response || response.error) {
-          console.warn("Galeri desa belum tersedia.", response ? response.error : "");
+          console.warn("Galeri dusun belum tersedia.", response ? response.error : "");
           renderFallback(track, fallback);
           return;
         }
@@ -150,7 +150,7 @@
         var items = (response.data || []).map(function (item) {
           var imageUrl = pickValue(item, ["image_url", "imageUrl", "photo_url", "thumbnail_url"]);
           return {
-            title: pickValue(item, ["title", "name", "caption"]) || "Foto Desa",
+            title: pickValue(item, ["title", "name", "caption"]) || "Foto Dusun",
             description: pickValue(item, ["description", "desc", "detail"]) || "",
             imageUrl: imageUrl
           };
@@ -159,7 +159,7 @@
         renderGallery(track, items, fallback);
         updateNavState(track, prevButton, nextButton);
       } catch (error) {
-        console.warn("Gagal memuat galeri desa.", error);
+        console.warn("Gagal memuat galeri dusun.", error);
         renderFallback(track, fallback);
       }
     }

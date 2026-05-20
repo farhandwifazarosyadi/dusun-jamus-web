@@ -295,7 +295,7 @@
       return;
     }
 
-    setStatus(status, "Memuat data tentang desa...", false);
+    setStatus(status, "Memuat data tentang dusun...", false);
     var response = await app.supabase.getSiteProfile();
     if (response.error) {
       setStatus(status, response.error, true);
@@ -873,7 +873,6 @@
         var payload = {
           title: title,
           image_url: imageUrl,
-          maps_url: getInputValue(form, "maps_url"),
           slug: slugify(title)
         };
 
@@ -924,7 +923,6 @@
           submitButton.textContent = "Update";
         }
         setInputValue(form, "title", item.title);
-        setInputValue(form, "maps_url", item.maps_url);
         setPreviewImage(preview, item.image_url || "");
       });
     }
