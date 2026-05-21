@@ -70,6 +70,44 @@
     return formatted.replace("Rp", "Rp. ");
   }
 
+  function getKarangTarunaPositionRank(position) {
+    var normalized = String(position || "").toLowerCase().trim();
+    if (normalized === "ketua") {
+      return 1;
+    }
+    if (normalized === "wakil ketua") {
+      return 2;
+    }
+    if (normalized === "sekretaris") {
+      return 3;
+    }
+    if (normalized === "bendahara") {
+      return 4;
+    }
+    if (normalized.indexOf("anggota") !== -1) {
+      return 999;
+    }
+    return 50;
+  }
+
+  function sortKarangTarunaMembers(members) {
+    return (members || []).slice().sort(function (a, b) {
+      var rankA = getKarangTarunaPositionRank(a && a.position);
+      var rankB = getKarangTarunaPositionRank(b && b.position);
+      if (rankA !== rankB) {
+        return rankA - rankB;
+      }
+      var orderA = Number((a && a.sort_order) || 0);
+      var orderB = Number((b && b.sort_order) || 0);
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      var nameA = String((a && a.name) || "");
+      var nameB = String((b && b.name) || "");
+      return nameA.localeCompare(nameB);
+    });
+  }
+
   function getInputValue(form, name) {
     var field = form.querySelector("[name=\"" + name + "\"]");
     if (!field) {
@@ -1269,7 +1307,7 @@
       return;
     }
 
-    state.karangMembers = response.data || [];
+    state.karangMembers = sortKarangTarunaMembers(response.data || []);
     if (list) {
       list.innerHTML = state.karangMembers.map(function (item) {
         var imageHtml = item.photo_url

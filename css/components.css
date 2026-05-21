@@ -1,7 +1,6 @@
 /* Reusable UI components */
 .container {
-  width: 100%;
-  max-width: var(--max-width);
+  width: min(100% - 2rem, 1200px);
   margin: 0 auto;
   padding: 0 var(--space-3);
 }
@@ -155,8 +154,7 @@
 }
 /* Reusable UI components */
 .container {
-  width: 100%;
-  max-width: var(--max-width);
+  width: min(100% - 2rem, 1200px);
   margin: 0 auto;
   padding: 0 var(--space-3);
 }

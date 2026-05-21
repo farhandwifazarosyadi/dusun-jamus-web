@@ -37,6 +37,8 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -46,6 +48,8 @@ body {
   color: var(--color-text);
   line-height: 1.65;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 main {
@@ -54,6 +58,12 @@ main {
 
 img {
   max-width: 100%;
+  display: block;
+}
+
+video {
+  max-width: 100%;
+  height: auto;
   display: block;
 }
 
@@ -142,6 +152,8 @@ h3 {
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -151,6 +163,8 @@ body {
   color: var(--color-text);
   line-height: 1.65;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 main {
@@ -159,6 +173,12 @@ main {
 
 img {
   max-width: 100%;
+  display: block;
+}
+
+video {
+  max-width: 100%;
+  height: auto;
   display: block;
 }
 

@@ -236,7 +236,7 @@
 
 .gallery-slide {
   scroll-snap-align: start;
-  flex: 0 0 min(360px, 80vw);
+  flex: 0 0 min(420px, 88vw);
 }
 
 .gallery-card {
@@ -245,7 +245,7 @@
   border-radius: 16px;
   padding: var(--space-3);
   text-align: center;
-  min-height: 240px;
+  min-height: 300px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -255,7 +255,7 @@
 
 .gallery-card img {
   width: 100%;
-  height: 220px;
+  height: clamp(260px, 35vw, 380px);
   object-fit: cover;
   border-radius: 12px;
 }
