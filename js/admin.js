@@ -416,6 +416,7 @@
     var contact = response.data || {};
     form.dataset.contactId = contact.id || "";
     setInputValue(form, "address", contact.address || "");
+    setInputValue(form, "contact_person_name", contact.contact_person_name || "");
     setInputValue(form, "phone", contact.phone || "");
     setInputValue(form, "whatsapp", contact.whatsapp || "");
     setInputValue(form, "email", contact.email || "");
@@ -475,6 +476,7 @@
 
         var payload = {
           address: getInputValue(contactForm, "address"),
+          contact_person_name: getInputValue(contactForm, "contact_person_name"),
           phone: getInputValue(contactForm, "phone"),
           whatsapp: getInputValue(contactForm, "whatsapp"),
           email: getInputValue(contactForm, "email")

@@ -271,7 +271,7 @@
       try {
         var response = await client
           .from("site_contacts")
-          .select("id, address, phone, whatsapp, email, is_active")
+          .select("id, address, contact_person_name, phone, whatsapp, email, is_active")
           .eq("is_active", true)
           .order("updated_at", { ascending: false })
           .limit(1)
@@ -303,6 +303,7 @@
 
         var payload = {
           address: data.address || "",
+          contact_person_name: data.contact_person_name || "",
           phone: data.phone || "",
           whatsapp: data.whatsapp || "",
           email: data.email || "",

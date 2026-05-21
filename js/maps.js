@@ -252,6 +252,7 @@
       var contact = response.contact || {};
       var socials = response.socials || [];
       var address = contact.address || contact.alamat || defaultAddress;
+      var contactPerson = String(contact.contact_person_name || "").trim();
       var phone = contact.phone || contact.telepon || contact.whatsapp || "-";
       var email = contact.email || "-";
       var description = contact.description || contact.keterangan || "Informasi kontak Dusun Jamus.";
@@ -266,9 +267,13 @@
       if (!isValidCoordinate(lng, -180, 180)) {
         lng = defaultLng;
       }
+      if (!contactPerson) {
+        contactPerson = "-";
+      }
 
       updateContactText("[data-contact-description]", description);
       updateContactText("[data-contact-address]", "Alamat: " + address);
+      updateContactText("[data-contact-person]", "Nama yang dihubungi / CP: " + contactPerson);
       updateContactText("[data-contact-phone]", "Telepon/WA: " + phone);
       updateContactText("[data-contact-email]", "Email: " + email);
 
