@@ -51,6 +51,25 @@
       .replace(/-+/g, "-");
   }
 
+  function sanitizeNumberString(value) {
+    return String(value || "").replace(/[^0-9]/g, "");
+  }
+
+  function formatRupiah(value) {
+    var clean = sanitizeNumberString(value);
+    var number = Number(clean);
+    if (!number) {
+      return "-";
+    }
+    var formatted = new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(number);
+    return formatted.replace("Rp", "Rp. ");
+  }
+
   function getInputValue(form, name) {
     var field = form.querySelector("[name=\"" + name + "\"]");
     if (!field) {
@@ -1314,7 +1333,7 @@
         var editId = form.dataset.editId;
         var title = getInputValue(form, "title");
         var description = getInputValue(form, "description");
-        var priceText = getInputValue(form, "price_text");
+        var priceText = sanitizeNumberString(getInputValue(form, "price_text"));
         var file = getFileFromInput(fileInput);
         var imageUrl = form.dataset.currentImage || "";
 
@@ -1402,7 +1421,7 @@
         }
         setInputValue(form, "title", item.title || "");
         setInputValue(form, "description", item.description || "");
-        setInputValue(form, "price_text", item.price_text || "");
+        setInputValue(form, "price_text", sanitizeNumberString(item.price_text || ""));
         setPreviewImage(preview, item.image_url || "");
       });
     }
@@ -1435,9 +1454,10 @@
           ? "<img class=\"admin-thumb\" src=\"" + item.image_url + "\" alt=\"Preview\" />"
           : "-";
         var umkmTitle = umkmMap[String(item.umkm_id)] || "-";
+        var priceLabel = item.price_text ? formatRupiah(item.price_text) : "-";
         return "<tr>" +
           "<td>" + (item.title || "-") + "</td>" +
-          "<td>" + (item.price_text || "-") + "</td>" +
+          "<td>" + priceLabel + "</td>" +
           "<td>" + umkmTitle + "</td>" +
           "<td>" + imageHtml + "</td>" +
           "<td>" +

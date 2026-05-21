@@ -21,6 +21,25 @@
     return params.get("slug") || "";
   }
 
+  function sanitizeNumberString(value) {
+    return String(value || "").replace(/[^0-9]/g, "");
+  }
+
+  function formatRupiah(value) {
+    var clean = sanitizeNumberString(value);
+    var number = Number(clean);
+    if (!number) {
+      return "-";
+    }
+    var formatted = new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(number);
+    return formatted.replace("Rp", "Rp. ");
+  }
+
   function createCatalogCard(item) {
     var card = document.createElement("article");
     card.className = "catalog-card";
@@ -52,7 +71,7 @@
     if (item.price_text) {
       var price = document.createElement("p");
       price.className = "catalog-price";
-      price.textContent = item.price_text;
+      price.textContent = formatRupiah(item.price_text);
       card.appendChild(price);
     }
 
