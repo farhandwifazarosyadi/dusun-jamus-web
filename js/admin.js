@@ -206,6 +206,7 @@
     umkmCatalogItems: [],
     socialLinks: []
   };
+  var adminTabLoaded = {};
 
   async function initAdminPage() {
     if (!document.body.classList.contains("admin-page")) {
@@ -246,14 +247,39 @@
       $("[data-admin-logout]").disabled = false;
     }
 
-    await loadLandingItems();
-    await loadAboutProfile();
-    await loadContactInfo();
-    await loadSocialLinks();
-    await loadGalleryItems();
-    await loadUmkmItems();
-    await renderKarangTarunaAdmin();
-    await renderUmkmCatalogAdmin();
+    adminTabLoaded = {};
+    var activeTab = document.querySelector("[data-admin-tab].is-active") || document.querySelector("[data-admin-tab]");
+    if (activeTab) {
+      await loadAdminTab(activeTab.getAttribute("data-admin-tab"));
+    }
+  }
+
+  async function loadAdminTab(tab) {
+    if (!tab || adminTabLoaded[tab]) {
+      return;
+    }
+
+    if (tab === "landing") {
+      await loadLandingItems();
+    } else if (tab === "about") {
+      await loadAboutProfile();
+    } else if (tab === "contact") {
+      await loadContactInfo();
+      await loadSocialLinks();
+    } else if (tab === "gallery") {
+      await loadGalleryItems();
+    } else if (tab === "umkm") {
+      await loadUmkmItems();
+    } else if (tab === "umkm-detail") {
+      await loadUmkmItems();
+    } else if (tab === "umkm-catalog") {
+      await loadUmkmItems();
+      await renderUmkmCatalogItems();
+    } else if (tab === "karang-taruna") {
+      await renderKarangTarunaAdmin();
+    }
+
+    adminTabLoaded[tab] = true;
   }
 
   async function checkSession() {
@@ -337,6 +363,7 @@
         panels.forEach(function (panel) {
           panel.classList.toggle("is-active", panel.getAttribute("data-admin-panel") === target);
         });
+        loadAdminTab(target);
       });
     });
   }

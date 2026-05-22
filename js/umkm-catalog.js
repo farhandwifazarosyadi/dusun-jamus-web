@@ -51,6 +51,8 @@
       var img = document.createElement("img");
       img.src = item.image_url;
       img.alt = item.title;
+      img.loading = "lazy";
+      img.decoding = "async";
       imageWrap.appendChild(img);
     } else {
       imageWrap.textContent = "Produk";

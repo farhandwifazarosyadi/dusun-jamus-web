@@ -60,6 +60,8 @@
     var img = document.createElement("img");
     img.src = member.photo_url || FALLBACK_MEMBER_IMAGE_URL;
     img.alt = member.name || "Anggota";
+    img.loading = "lazy";
+    img.decoding = "async";
     image.appendChild(img);
 
     var name = document.createElement("h3");
@@ -94,6 +96,8 @@
     }
     if (image) {
       image.src = (info && info.structure_image_url) || FALLBACK_STRUCTURE_IMAGE_URL;
+      image.loading = "lazy";
+      image.decoding = "async";
     }
   }
 
@@ -154,6 +158,13 @@
 
   app.karangTaruna = {
     init: async function () {
+      var membersGrid = document.querySelector("[data-karang-members]");
+      var infoTitle = document.querySelector("[data-karang-info-title]");
+      var infoDescription = document.querySelector("[data-karang-info-description]");
+      var infoImage = document.querySelector("[data-karang-structure-image]");
+      if (!membersGrid && !infoTitle && !infoDescription && !infoImage) {
+        return;
+      }
       await loadInfo();
       await loadMembers();
     }

@@ -62,6 +62,8 @@
       var img = document.createElement("img");
       img.src = imageUrl;
       img.alt = pickValue(item, ["title", "name"], "UMKM");
+      img.loading = "lazy";
+      img.decoding = "async";
       img.style.width = "100%";
       img.style.height = "100%";
       img.style.objectFit = "cover";
@@ -152,6 +154,7 @@
         var img = document.createElement("img");
         img.src = imageUrl;
         img.alt = pickValue(item, ["title", "name"], "UMKM");
+        img.decoding = "async";
         image.appendChild(img);
       } else {
         image.textContent = pickValue(item, ["title", "name"], "Gambar UMKM");
@@ -216,7 +219,10 @@
     }
 
     try {
-      var response = await client.from("potential_items").select("*");
+      var response = await client
+        .from("potential_items")
+        .select("*")
+        .eq("type", "umkm");
       if (response.error) {
         return { data: [], error: response.error.message };
       }

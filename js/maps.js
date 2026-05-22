@@ -111,7 +111,7 @@
       link.href = item.url || "#";
       link.textContent = item.label || "Social";
       link.target = "_blank";
-      link.rel = "noopener";
+      link.rel = "noopener noreferrer";
       li.appendChild(link);
       list.appendChild(li);
     });

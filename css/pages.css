@@ -946,6 +946,15 @@
   font-weight: 600;
 }
 
+.contact-info p,
+.detail-description,
+.detail-location,
+.catalog-desc,
+.admin-table td,
+.admin-table th {
+  overflow-wrap: anywhere;
+}
+
 .contact-socials {
   display: grid;
   gap: var(--space-1);

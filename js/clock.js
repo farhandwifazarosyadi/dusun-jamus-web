@@ -39,10 +39,17 @@
     });
   }
 
+  var clockTimerId = null;
+
   app.clock = {
     init: function () {
+      if (!document.querySelector("[data-clock-time]") && !document.querySelector("[data-clock-date]")) {
+        return;
+      }
       updateClock();
-      window.setInterval(updateClock, 1000);
+      if (!clockTimerId) {
+        clockTimerId = window.setInterval(updateClock, 1000);
+      }
     },
     formatTime: formatTime
   };

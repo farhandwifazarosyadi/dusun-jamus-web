@@ -108,6 +108,12 @@
 
   app.weather = {
     init: async function () {
+      if (!document.querySelector("[data-weather-panel]") &&
+        !document.querySelector("[data-weather-text]") &&
+        !document.querySelector("[data-weather-location]")) {
+        return;
+      }
+
       var weatherLat = app.config && typeof app.config.get === "function"
         ? app.config.get("weatherLat")
         : "";

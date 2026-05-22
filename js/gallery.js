@@ -26,6 +26,8 @@
       var img = document.createElement("img");
       img.src = item.imageUrl;
       img.alt = item.title || label;
+      img.loading = "lazy";
+      img.decoding = "async";
       card.textContent = "";
       card.appendChild(img);
 
@@ -129,7 +131,7 @@
 
         track.addEventListener("scroll", function () {
           updateNavState(track, prevButton, nextButton);
-        });
+        }, { passive: true });
 
         updateNavState(track, prevButton, nextButton);
       }
