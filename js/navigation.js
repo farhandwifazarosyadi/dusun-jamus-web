@@ -1,120 +1,33 @@
 /* navigation.js - Navigation and UI state */
-(function (app) {
+(function () {
   "use strict";
+
+  function normalizePath(pathname) {
+    if (!pathname) {
+      return "";
+    }
+
+    var clean = pathname.replace(/\\/g, "/");
+    var parts = clean.split("/").filter(Boolean);
+    return parts.length ? parts[parts.length - 1] : "";
+  }
+
+  function isHomePath(pathname) {
+    var file = normalizePath(pathname);
+    return !file || file === "index.html";
+  }
 
   function toArray(nodeList) {
     return Array.prototype.slice.call(nodeList);
   }
 
-  function normalizePath(pathname) {
-    if (!pathname) {
-      return "";
-    }
-    var clean = pathname.replace(/\\/g, "/");
-    var parts = clean.split("/").filter(Boolean);
-    return parts.length ? parts[parts.length - 1] : "";
-  }
-
-  function isHomePath(pathname) {
-    var file = normalizePath(pathname);
-    return !file || file === "index.html";
-  }
-
-  function easeInOutCubic(t) {
-    return t < 0.5
-      ? 4 * t * t * t
-      : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  }
-
-  function getNavbarElement() {
-    return document.querySelector(".site-header") || document.querySelector(".navbar");
-  }
-
-  function ensureNavbarSpacer(navbar) {
-    var spacer = document.querySelector(".navbar-spacer");
-
-    if (!spacer && navbar && navbar.parentNode) {
-      spacer = document.createElement("div");
-      spacer.className = "navbar-spacer";
-      spacer.setAttribute("aria-hidden", "true");
-      navbar.parentNode.insertBefore(spacer, navbar.nextSibling);
-    }
-
-    return spacer;
-  }
-
-  function getCurrentNavbarHeight() {
-    var navbar = getNavbarElement();
-    return navbar ? navbar.offsetHeight : 72;
-  }
-
-  function getSectionMap() {
-    return [
-      {
-        links: ["a[href=\"#tentang-dusun\"]", "a[href=\"#tentang-desa\"]"],
-        section: document.querySelector("#tentang-dusun") || document.querySelector("#tentang-desa")
-      },
-      {
-        links: ["a[href=\"#galeri-dusun\"]", "a[href=\"#galeri-desa\"]"],
-        section: document.querySelector("#galeri-dusun") || document.querySelector("#galeri-desa")
-      },
-      {
-        links: ["a[href=\"#umkm\"]"],
-        section: document.querySelector("#umkm")
-      },
-      {
-        links: ["a[href=\"#karang-taruna\"]"],
-        section: document.querySelector("#karang-taruna")
-      },
-      {
-        links: ["a[href=\"#kontak\"]"],
-        section: document.querySelector("#kontak")
-      }
-    ];
-  }
-
-  function clearActiveNavLinks() {
-    document.querySelectorAll(".nav-link, .navbar a, .nav-menu a").forEach(function (link) {
-      link.classList.remove("active", "is-active");
-    });
-  }
-
-  function setActiveLinks(selectors) {
-    selectors.forEach(function (selector) {
-      document.querySelectorAll(selector).forEach(function (link) {
-        link.classList.add("active", "is-active");
-      });
-    });
-  }
-/* navigation.js - Navigation and UI state */
-(function (app) {
-  "use strict";
-
-  function normalizePath(pathname) {
-    if (!pathname) {
-      return "";
-    }
-    var clean = pathname.replace(/\\/g, "/");
-    var parts = clean.split("/").filter(Boolean);
-    return parts.length ? parts[parts.length - 1] : "";
-  }
-
-  function isHomePath(pathname) {
-    var file = normalizePath(pathname);
-    return !file || file === "index.html";
-  }
-
   document.addEventListener("DOMContentLoaded", function () {
     var header = document.querySelector(".site-header") || document.querySelector(".navbar");
     var navToggle = document.querySelector(".nav-toggle") || document.querySelector(".navbar-toggle");
-    var navMenu = document.querySelector(".nav-menu") || document.querySelector(".navbar-menu");
-    var navLinks = document.querySelectorAll(".nav-link, .nav-menu a, .navbar-menu a");
-    var triggerSection = document.querySelector("#tentang-dusun") || document.querySelector("#tentang-desa");
-
-    if (!header) {
-      return;
-    }
-
+    var navMenu = document.querySelector(".site-nav") || document.querySelector(".nav-menu") || document.querySelector(".navbar-menu");
+    var navLinks = toArray(document.querySelectorAll(".nav-link, .nav-menu a, .navbar-menu a"));
+    var aboutSection = document.querySelector("#tentang-dusun") || document.querySelector("#tentang-desa");
+    var isHome = isHomePath(window.location.pathname);
     var sectionMap = [
       {
         section: document.querySelector("#tentang-dusun") || document.querySelector("#tentang-desa"),
@@ -129,6 +42,10 @@
         aliases: ["#umkm"]
       },
       {
+        section: document.querySelector("#karang-taruna"),
+        aliases: ["#karang-taruna"]
+      },
+      {
         section: document.querySelector("#kontak"),
         aliases: ["#kontak"]
       }
@@ -136,41 +53,49 @@
       return !!item.section;
     });
 
+    if (!header) {
+      return;
+    }
+
     function getHeaderHeight() {
       return header.offsetHeight || 72;
     }
 
-    function updateStickyNavbar() {
-      if (!triggerSection) {
+    function setHomeHeaderState() {
+      if (!isHome || !aboutSection) {
+        document.body.classList.remove("nav-hidden");
+        header.classList.remove("is-sticky");
         return;
       }
 
-      var shouldStick = window.scrollY >= triggerSection.offsetTop;
-      header.classList.toggle("is-sticky", shouldStick);
+      var shouldShow = window.scrollY >= aboutSection.offsetTop - 8;
+
+      header.classList.toggle("is-sticky", shouldShow);
+      document.body.classList.toggle("nav-hidden", !shouldShow);
     }
 
     function updateActiveNav() {
-      if (!isHomePath(window.location.pathname)) {
+      if (!isHome) {
         return;
       }
 
       var offset = getHeaderHeight() + 80;
       var y = window.scrollY + offset;
-      var active = null;
+      var activeSection = null;
 
       sectionMap.forEach(function (item) {
         var top = item.section.offsetTop;
         var bottom = top + item.section.offsetHeight;
 
         if (y >= top && y < bottom) {
-          active = item;
+          activeSection = item;
         }
       });
 
       navLinks.forEach(function (link) {
         var href = link.getAttribute("href") || "";
         var normalizedHref = href.replace("../index.html", "");
-        var isActive = active ? active.aliases.indexOf(normalizedHref) !== -1 : false;
+        var isActive = activeSection ? activeSection.aliases.indexOf(normalizedHref) !== -1 : false;
 
         link.classList.toggle("active", isActive);
         link.classList.toggle("is-active", isActive);
@@ -181,29 +106,31 @@
       if (navMenu) {
         navMenu.classList.remove("is-open", "active", "show");
       }
+
       if (navToggle) {
         navToggle.classList.remove("is-open", "active");
+        navToggle.setAttribute("aria-expanded", "false");
       }
     }
 
     navLinks.forEach(function (link) {
       var href = link.getAttribute("href") || "";
 
-      if (!href.startsWith("#")) {
+      if (!href || href.charAt(0) !== "#") {
         return;
       }
 
       link.addEventListener("click", function (event) {
         var target = document.querySelector(href);
+
         if (!target) {
           return;
         }
 
         event.preventDefault();
 
-        var targetY = target.offsetTop - getHeaderHeight() - 8;
         window.scrollTo({
-          top: targetY,
+          top: target.offsetTop - getHeaderHeight() - 8,
           behavior: "smooth"
         });
 
@@ -213,38 +140,36 @@
 
     if (navToggle && navMenu) {
       navToggle.addEventListener("click", function () {
-        navMenu.classList.toggle("is-open");
-        navToggle.classList.toggle("is-open");
+        var isOpen = navMenu.classList.toggle("is-open");
+
+        navToggle.classList.toggle("is-open", isOpen);
+        navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
       });
     }
 
     var ticking = false;
 
-    window.addEventListener(
-      "scroll",
-      function () {
-        if (ticking) {
-          return;
-        }
+    function handleScrollState() {
+      if (ticking) {
+        return;
+      }
 
-        ticking = true;
+      ticking = true;
 
-        requestAnimationFrame(function () {
-          updateStickyNavbar();
-          updateActiveNav();
-          ticking = false;
-        });
-      },
-      { passive: true }
-    );
+      window.requestAnimationFrame(function () {
+        setHomeHeaderState();
+        updateActiveNav();
+        ticking = false;
+      });
+    }
 
+    window.addEventListener("scroll", handleScrollState, { passive: true });
     window.addEventListener("resize", function () {
-      updateStickyNavbar();
+      setHomeHeaderState();
       updateActiveNav();
     });
 
-    updateStickyNavbar();
+    setHomeHeaderState();
     updateActiveNav();
   });
-})(window.DusunJamus = window.DusunJamus || {});
-    if (window.__navbarStickyBound) {
+})();
