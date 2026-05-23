@@ -67,7 +67,8 @@
         return;
       }
 
-      header.classList.toggle("is-sticky", window.scrollY > 0);
+      var threshold = aboutSection ? aboutSection.offsetTop - getHeaderHeight() : 0;
+      header.classList.toggle("is-sticky", window.scrollY >= threshold);
     }
 
     function updateActiveNav() {

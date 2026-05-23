@@ -69,9 +69,28 @@
   transition: background-color 0.24s ease, box-shadow 0.24s ease, backdrop-filter 0.24s ease;
 }
 
+.page-home .site-header {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  transform: translateY(-110%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
 .site-header.is-sticky {
   box-shadow: 0 8px 20px rgba(28, 22, 16, 0.14);
   background-color: var(--color-primary);
+}
+
+.page-home .site-header.is-sticky {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .navbar-spacer {
