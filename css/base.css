@@ -25,6 +25,7 @@
   --max-width: 1120px;
   --font-body: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-heading: "Georgia", "Times New Roman", serif;
+  --navbar-height: 72px;
 }
 
 *,
@@ -50,6 +51,7 @@ body {
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
+  padding-top: var(--navbar-height, 72px);
 }
 
 main {
@@ -113,4 +115,10 @@ h3 {
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --navbar-height: 64px;
+  }
 }

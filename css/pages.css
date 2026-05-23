@@ -396,6 +396,11 @@
   z-index: 1;
 }
 
+.leaflet-pane,
+.leaflet-control {
+  z-index: 1;
+}
+
 .places-card {
   margin-top: var(--space-3);
   background: var(--color-surface);

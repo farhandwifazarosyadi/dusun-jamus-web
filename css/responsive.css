@@ -18,7 +18,7 @@
     background: var(--color-primary);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     overflow-x: hidden;
-    max-height: calc(100vh - 72px);
+    max-height: calc(100vh - var(--navbar-height, 72px));
     overflow-y: auto;
   }
 
