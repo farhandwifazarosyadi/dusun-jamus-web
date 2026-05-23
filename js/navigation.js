@@ -62,6 +62,11 @@
     }
 
     function updateHeaderState() {
+      if (!isHome) {
+        header.classList.add("is-sticky");
+        return;
+      }
+
       header.classList.toggle("is-sticky", window.scrollY > 0);
     }
 
@@ -120,9 +125,9 @@
 
       event.preventDefault();
 
-      window.scrollTo({
-        top: target.offsetTop - getHeaderHeight() - 8,
-        behavior: "smooth"
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
       });
 
       closeMobileMenu();
