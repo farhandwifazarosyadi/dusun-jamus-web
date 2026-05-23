@@ -13,6 +13,15 @@
     }
   }
 
+  function hasAny(selectors) {
+    if (!selectors || !selectors.length) {
+      return false;
+    }
+    return selectors.some(function (selector) {
+      return !!document.querySelector(selector);
+    });
+  }
+
   async function loadAboutPreview() {
     var target = document.querySelector("[data-about-description]");
     var historyTarget = document.querySelector("[data-about-history]");
@@ -55,14 +64,24 @@
 
       safeInit(app.navigation, "navigation");
       safeInit(app.news, "news");
-      safeInit(app.gallery, "gallery");
+      if (hasAny([".gallery-section", "[data-gallery-track]"])) {
+        safeInit(app.gallery, "gallery");
+      }
       safeInit(app.potentials, "potentials");
       safeInit(app.karangTaruna, "karangTaruna");
       safeInit(app.umkmCatalog, "umkmCatalog");
-      safeInit(app.maps, "maps");
-      safeInit(app.weather, "weather");
-      safeInit(app.clock, "clock");
-      safeInit(app.calendar, "calendar");
+      if (hasAny(["[data-contact-section]", "[data-contact-map]"])) {
+        safeInit(app.maps, "maps");
+      }
+      if (hasAny(["[data-weather-panel]", "[data-weather-text]", "[data-weather-location]"])) {
+        safeInit(app.weather, "weather");
+      }
+      if (hasAny(["[data-clock-time]", "[data-clock-date]"])) {
+        safeInit(app.clock, "clock");
+      }
+      if (hasAny(["[data-calendar]"])) {
+        safeInit(app.calendar, "calendar");
+      }
 
       loadAboutPreview();
     }

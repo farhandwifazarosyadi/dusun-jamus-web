@@ -130,6 +130,9 @@
       var fullLocation = locationConfig && locationConfig.fullAddress
         ? locationConfig.fullAddress
         : "Dusun Jamus, Kecamatan Pengasih, Kabupaten Kulon Progo, DIY";
+      var cachedContact = app.contact || null;
+      var cachedAddress = cachedContact && cachedContact.address ? cachedContact.address : "";
+      var locationLabel = cachedAddress || fullLocation || fallbackLocation;
       var fallbackLat = locationConfig && typeof locationConfig.latitude === "number"
         ? locationConfig.latitude
         : -7.83552;
@@ -138,6 +141,14 @@
         : 110.17035;
 
       async function resolveCoordinates() {
+        if (cachedContact &&
+          isValidCoordinate(cachedContact.lat, -90, 90) &&
+          isValidCoordinate(cachedContact.lng, -180, 180)) {
+          return {
+            lat: parseFloat(cachedContact.lat),
+            lng: parseFloat(cachedContact.lng)
+          };
+        }
         if (app.supabase && typeof app.supabase.getSiteContacts === "function") {
           try {
             var response = await app.supabase.getSiteContacts();
@@ -161,7 +172,7 @@
         var response = await fetch(buildWeatherUrl(lat, lng, weatherTimezone));
         if (!response.ok) {
           updateWeatherDisplay({
-            location: fullLocation,
+            location: locationLabel,
             temp: "-",
             desc: "Data cuaca belum tersedia",
             iconUrl: "",
@@ -214,7 +225,7 @@
           });
         }
         updateWeatherDisplay({
-          location: fullLocation,
+          location: locationLabel,
           temp: temp,
           desc: desc || "Data cuaca belum tersedia",
           humidity: humidity,
@@ -227,7 +238,7 @@
       } catch (error) {
         console.warn("Gagal memuat cuaca.", error);
         updateWeatherDisplay({
-          location: fullLocation,
+          location: locationLabel,
           temp: "-",
           desc: "Data cuaca belum tersedia",
           iconUrl: "",

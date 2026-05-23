@@ -15,6 +15,11 @@
   .site-nav {
     width: 100%;
     display: none;
+    background: var(--color-primary);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    overflow-x: hidden;
+    max-height: calc(100vh - 72px);
+    overflow-y: auto;
   }
 
   .site-nav.is-open {
@@ -26,6 +31,7 @@
     align-items: flex-start;
     gap: var(--space-2);
     padding: var(--space-2) 0;
+    width: 100%;
   }
 
   .hero-content {
