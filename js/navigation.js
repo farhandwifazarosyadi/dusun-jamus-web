@@ -126,35 +126,27 @@
     });
   }
 
-  function setupHeaderVisibility(header) {
+  function setupStickyTrigger(header) {
     if (!header || !isHomePath(window.location.pathname)) {
       return;
     }
 
-    var aboutSection = document.querySelector("#tentang-desa");
+    var aboutSection = document.querySelector("#tentang-desa") ||
+      document.querySelector("#tentang-dusun");
     if (!aboutSection) {
       return;
     }
 
-    function getNavbarHeight() {
-      var value = window.getComputedStyle(document.documentElement)
-        .getPropertyValue("--navbar-height")
-        .trim();
-      var numeric = parseFloat(value);
-      return Number.isFinite(numeric) ? numeric : 72;
+    function updateSticky() {
+      var triggerTop = aboutSection.getBoundingClientRect().top + window.pageYOffset;
+      var shouldStick = window.pageYOffset >= triggerTop - 10;
+      header.classList.toggle("is-sticky", shouldStick);
+      document.body.classList.toggle("navbar-sticky", shouldStick);
     }
 
-    function updateVisibility() {
-      var aboutTop = aboutSection.getBoundingClientRect().top + window.pageYOffset;
-      var threshold = Math.max(aboutTop - getNavbarHeight(), 0);
-      var shouldShow = window.pageYOffset >= threshold;
-      header.classList.toggle("is-hidden", !shouldShow);
-      document.body.classList.toggle("nav-hidden", !shouldShow);
-    }
-
-    updateVisibility();
-    window.addEventListener("scroll", updateVisibility, { passive: true });
-    window.addEventListener("resize", updateVisibility);
+    updateSticky();
+    window.addEventListener("scroll", updateSticky, { passive: true });
+    window.addEventListener("resize", updateSticky);
   }
 
   app.navigation = {
@@ -208,7 +200,7 @@
 
       updateActiveState(links);
       setupScrollSpy(links);
-      setupHeaderVisibility(header);
+      setupStickyTrigger(header);
     }
   };
 })(window.DusunJamus = window.DusunJamus || {});
