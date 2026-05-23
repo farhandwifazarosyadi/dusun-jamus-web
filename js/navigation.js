@@ -140,8 +140,19 @@
     function updateSticky() {
       var triggerTop = aboutSection.getBoundingClientRect().top + window.pageYOffset;
       var shouldStick = window.pageYOffset >= triggerTop - 10;
-      header.classList.toggle("is-sticky", shouldStick);
-      document.body.classList.toggle("navbar-sticky", shouldStick);
+      var isSticky = header.classList.contains("is-sticky");
+      if (shouldStick && !isSticky) {
+        // preserve layout: reserve space equal to header's current height
+        var preHeight = header.getBoundingClientRect().height;
+        document.body.style.paddingTop = preHeight + "px";
+        header.classList.add("is-sticky");
+        document.body.classList.add("navbar-sticky");
+      } else if (!shouldStick && isSticky) {
+        header.classList.remove("is-sticky");
+        document.body.classList.remove("navbar-sticky");
+        // remove reserved space
+        document.body.style.paddingTop = "";
+      }
     }
 
     updateSticky();

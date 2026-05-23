@@ -73,7 +73,10 @@ body.navbar-sticky {
   width: 100%;
   z-index: 100;
   backdrop-filter: blur(8px);
-  transition: box-shadow 0.25s ease, background-color 0.25s ease;
+  --navbar-padding: 20px;
+  --navbar-padding-sticky: 10px;
+  --navbar-height-sticky: 64px;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, padding 0.25s ease, transform 0.25s ease;
 }
 
 .site-header.is-sticky {
@@ -82,7 +85,8 @@ body.navbar-sticky {
   left: 0;
   right: 0;
   z-index: 99999;
-  box-shadow: 0 10px 24px rgba(28, 22, 16, 0.18);
+  box-shadow: 0 8px 20px rgba(28, 22, 16, 0.14);
+  background-color: var(--color-primary);
 }
 
 .header-inner {
@@ -90,7 +94,12 @@ body.navbar-sticky {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: var(--space-3) 0;
+  padding: var(--navbar-padding) 0;
+  transition: padding 0.25s ease;
+}
+
+.site-header.is-sticky .header-inner {
+  padding: var(--navbar-padding-sticky) 0;
 }
 
 .brand {
