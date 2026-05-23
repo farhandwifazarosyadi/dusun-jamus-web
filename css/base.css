@@ -54,6 +54,10 @@ body {
   padding-top: var(--navbar-height, 72px);
 }
 
+body.page-home.nav-hidden {
+  padding-top: 0;
+}
+
 main {
   display: block;
 }

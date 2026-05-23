@@ -126,11 +126,43 @@
     });
   }
 
+  function setupHeaderVisibility(header) {
+    if (!header || !isHomePath(window.location.pathname)) {
+      return;
+    }
+
+    var aboutSection = document.querySelector("#tentang-desa");
+    if (!aboutSection) {
+      return;
+    }
+
+    function getNavbarHeight() {
+      var value = window.getComputedStyle(document.documentElement)
+        .getPropertyValue("--navbar-height")
+        .trim();
+      var numeric = parseFloat(value);
+      return Number.isFinite(numeric) ? numeric : 72;
+    }
+
+    function updateVisibility() {
+      var aboutTop = aboutSection.getBoundingClientRect().top + window.pageYOffset;
+      var threshold = Math.max(aboutTop - getNavbarHeight(), 0);
+      var shouldShow = window.pageYOffset >= threshold;
+      header.classList.toggle("is-hidden", !shouldShow);
+      document.body.classList.toggle("nav-hidden", !shouldShow);
+    }
+
+    updateVisibility();
+    window.addEventListener("scroll", updateVisibility, { passive: true });
+    window.addEventListener("resize", updateVisibility);
+  }
+
   app.navigation = {
     init: function () {
       var toggle = document.querySelector("[data-nav-toggle]");
       var menu = document.querySelector("[data-nav-menu]");
       var links = toArray(document.querySelectorAll("[data-nav-link]"));
+      var header = document.querySelector(".site-header");
 
       if (toggle && menu) {
         toggle.addEventListener("click", function () {
@@ -176,6 +208,7 @@
 
       updateActiveState(links);
       setupScrollSpy(links);
+      setupHeaderVisibility(header);
     }
   };
 })(window.DusunJamus = window.DusunJamus || {});

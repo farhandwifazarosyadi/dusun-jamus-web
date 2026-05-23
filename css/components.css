@@ -68,6 +68,15 @@
   left: 0;
   right: 0;
   backdrop-filter: blur(8px);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.site-header.is-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .header-inner {
