@@ -571,13 +571,18 @@
 }
 
 .potential-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
   text-align: center;
 }
 
 .potential-image {
   background: var(--color-surface);
   border-radius: 18px;
-  min-height: 90px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -596,6 +601,13 @@
   color: var(--color-muted);
   font-size: 0.9rem;
   margin-bottom: var(--space-2);
+}
+
+.potential-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .potential-link {
@@ -767,14 +779,18 @@
   border-radius: 16px;
   padding: var(--space-3);
   box-shadow: var(--shadow-sm);
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-2);
+  height: 100%;
+  overflow: hidden;
 }
 
 .catalog-image {
   background: var(--color-background);
   border-radius: 12px;
-  min-height: 160px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -787,6 +803,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .catalog-title {

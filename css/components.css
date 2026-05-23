@@ -76,7 +76,8 @@ body.navbar-sticky {
   --navbar-padding: 20px;
   --navbar-padding-sticky: 10px;
   --navbar-height-sticky: 64px;
-  transition: background-color 0.25s ease, box-shadow 0.25s ease, padding 0.25s ease, transform 0.25s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, padding 0.2s ease;
+  will-change: background-color, box-shadow;
 }
 
 .site-header.is-sticky {
