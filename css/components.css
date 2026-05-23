@@ -61,40 +61,21 @@
 .site-header {
   background: var(--color-primary);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  position: relative;
+  position: sticky;
+  top: 0;
   width: 100%;
-  z-index: 100;
+  z-index: 99999;
   backdrop-filter: blur(8px);
-  --navbar-padding: 20px;
-  --navbar-padding-sticky: 10px;
-  --navbar-height-sticky: 64px;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease, padding 0.2s ease;
-  will-change: background-color, box-shadow;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .site-header.is-sticky {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 99999;
   box-shadow: 0 8px 20px rgba(28, 22, 16, 0.14);
   background-color: var(--color-primary);
 }
 
 .navbar-spacer {
-  height: 0;
-  display: block;
-  pointer-events: none;
-  visibility: hidden;
-  background: transparent;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.navbar-spacer.is-active {
-  height: var(--navbar-height, 72px);
+  display: none !important;
 }
 
 .header-inner {
@@ -102,8 +83,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: var(--navbar-padding) 0;
-  transition: padding 0.25s ease;
+  padding: var(--space-3) 0;
 }
 
 .brand {
@@ -126,10 +106,23 @@
 }
 
 .nav-link {
+  position: relative;
   padding: 6px 0;
   border-bottom: 2px solid transparent;
   color: var(--color-text-light);
   transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 0;
+  height: 2px;
+  background: #fff;
+  transform: translateX(-50%);
+  transition: width 0.2s ease;
 }
 
 .nav-link:hover,
@@ -141,6 +134,11 @@
 .nav-link.is-active {
   border-color: var(--color-surface);
   color: var(--color-text-light);
+}
+
+.nav-link.active::after,
+.nav-link.is-active::after {
+  width: 100%;
 }
 
 .nav-toggle {
