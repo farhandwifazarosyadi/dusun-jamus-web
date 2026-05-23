@@ -39,13 +39,7 @@
       title.textContent = item.title || label;
       body.appendChild(title);
 
-      if (item.description) {
-        var desc = document.createElement("p");
-        desc.className = "gallery-card-desc";
-        desc.textContent = item.description;
-        body.appendChild(desc);
-      }
-
+      // intentionally omit description — gallery shows only image + title
       card.appendChild(body);
     } else {
       card.textContent = label;
@@ -153,7 +147,6 @@
           var imageUrl = pickValue(item, ["image_url", "imageUrl", "photo_url", "thumbnail_url"]);
           return {
             title: pickValue(item, ["title", "name", "caption"]) || "Foto Dusun",
-            description: pickValue(item, ["description", "desc", "detail"]) || "",
             imageUrl: imageUrl
           };
         });

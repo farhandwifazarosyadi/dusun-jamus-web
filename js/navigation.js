@@ -137,12 +137,46 @@
       return;
     }
 
+    function easeInOutCubic(t) {
+      return t < 0.5
+        ? 4 * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function getCurrentNavbarHeight() {
+      var h = document.querySelector(".site-header") || document.querySelector(".navbar");
+      return h ? h.offsetHeight : 72;
+    }
+
+    function smoothScrollToTarget(target, duration) {
+      duration = typeof duration === "number" ? duration : 750;
+      if (!target) return;
+      var navbarHeight = getCurrentNavbarHeight();
+      var targetY = target.getBoundingClientRect().top + window.scrollY - navbarHeight - 8;
+      var startY = window.scrollY;
+      var distance = targetY - startY;
+      var startTime = performance.now();
+
+      function step(currentTime) {
+        var elapsed = currentTime - startTime;
+        var progress = Math.min(elapsed / duration, 1);
+        var eased = easeInOutCubic(progress);
+        window.scrollTo(0, startY + distance * eased);
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
     function updateSticky() {
       var triggerTop = aboutSection.getBoundingClientRect().top + window.pageYOffset;
-      var shouldStick = window.pageYOffset >= triggerTop - 10;
+      var shouldStick = window.pageYOffset >= triggerTop - 8;
       var isSticky = header.classList.contains("is-sticky");
+      if (shouldStick === isSticky) {
+        return;
+      }
       if (shouldStick && !isSticky) {
-        // preserve layout: reserve space equal to header's current height
         var preHeight = header.getBoundingClientRect().height;
         document.body.style.paddingTop = preHeight + "px";
         header.classList.add("is-sticky");
@@ -150,7 +184,6 @@
       } else if (!shouldStick && isSticky) {
         header.classList.remove("is-sticky");
         document.body.classList.remove("navbar-sticky");
-        // remove reserved space
         document.body.style.paddingTop = "";
       }
     }
@@ -210,7 +243,8 @@
         }
 
         event.preventDefault();
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        // use custom RAF-based smooth scroll to avoid native roughness
+        smoothScrollToTarget(target, 700);
         history.replaceState(null, "", href);
         var hashLink = findLinkByHref(links, href);
         if (hashLink) {

@@ -817,7 +817,6 @@
         var payload = {
           title: title,
           image_url: imageUrl,
-          description: getInputValue(form, "description"),
           slug: slugify(title)
         };
 
@@ -869,7 +868,6 @@
           submitButton.textContent = "Update";
         }
         setInputValue(form, "title", item.title);
-        setInputValue(form, "description", item.description);
         setPreviewImage(preview, item.image_url || "");
       });
     }
