@@ -46,6 +46,16 @@ section {
   scroll-margin-top: var(--navbar-height, 72px);
 }
 
+#tentang-dusun,
+#tentang-desa,
+#galeri-dusun,
+#galeri-desa,
+#umkm,
+#karang-taruna,
+#kontak {
+  scroll-margin-top: var(--navbar-height, 72px);
+}
+
 body {
   font-family: var(--font-body);
   background: var(--color-bg);
@@ -55,7 +65,11 @@ body {
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
-  padding-top: var(--navbar-height, 72px);
+  padding-top: 0;
+}
+
+main {
+  padding-top: 0;
 }
 
 body.page-home.nav-hidden {

@@ -76,7 +76,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
+  width: 100%;
   z-index: 99999;
   box-shadow: 0 8px 20px rgba(28, 22, 16, 0.14);
   background-color: var(--color-primary);
@@ -84,7 +84,17 @@
 
 .navbar-spacer {
   height: 0;
+  display: block;
   pointer-events: none;
+  visibility: hidden;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.navbar-spacer.is-active {
+  height: var(--navbar-height, 72px);
 }
 
 .header-inner {
