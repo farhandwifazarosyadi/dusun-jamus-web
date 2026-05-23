@@ -66,33 +66,7 @@
   width: 100%;
   z-index: 99999;
   backdrop-filter: blur(8px);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.25s ease, opacity 0.25s ease;
-}
-
-.page-home .site-header {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  transform: translateY(-110%);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.page-home .site-header.is-sticky {
-  transform: translateY(0);
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.page-home.nav-hidden .site-header {
-  transform: translateY(-110%);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  box-shadow: none;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .site-header.is-sticky {

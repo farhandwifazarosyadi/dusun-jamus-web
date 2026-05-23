@@ -61,17 +61,8 @@
       return header.offsetHeight || 72;
     }
 
-    function setHomeHeaderState() {
-      if (!isHome || !aboutSection) {
-        document.body.classList.remove("nav-hidden");
-        header.classList.remove("is-sticky");
-        return;
-      }
-
-      var shouldShow = window.scrollY >= aboutSection.offsetTop - 8;
-
-      header.classList.toggle("is-sticky", shouldShow);
-      document.body.classList.toggle("nav-hidden", !shouldShow);
+    function updateHeaderState() {
+      header.classList.toggle("is-sticky", window.scrollY > 0);
     }
 
     function updateActiveNav() {
@@ -113,29 +104,28 @@
       }
     }
 
-    navLinks.forEach(function (link) {
-      var href = link.getAttribute("href") || "";
+    document.addEventListener("click", function (event) {
+      var link = event.target.closest("a[href^='#']");
 
-      if (!href || href.charAt(0) !== "#") {
+      if (!link) {
         return;
       }
 
-      link.addEventListener("click", function (event) {
-        var target = document.querySelector(href);
+      var href = link.getAttribute("href") || "";
+      var target = document.querySelector(href);
 
-        if (!target) {
-          return;
-        }
+      if (!target) {
+        return;
+      }
 
-        event.preventDefault();
+      event.preventDefault();
 
-        window.scrollTo({
-          top: target.offsetTop - getHeaderHeight() - 8,
-          behavior: "smooth"
-        });
-
-        closeMobileMenu();
+      window.scrollTo({
+        top: target.offsetTop - getHeaderHeight() - 8,
+        behavior: "smooth"
       });
+
+      closeMobileMenu();
     });
 
     if (navToggle && navMenu) {
@@ -157,7 +147,7 @@
       ticking = true;
 
       window.requestAnimationFrame(function () {
-        setHomeHeaderState();
+        updateHeaderState();
         updateActiveNav();
         ticking = false;
       });
@@ -165,11 +155,11 @@
 
     window.addEventListener("scroll", handleScrollState, { passive: true });
     window.addEventListener("resize", function () {
-      setHomeHeaderState();
+      updateHeaderState();
       updateActiveNav();
     });
 
-    setHomeHeaderState();
+    updateHeaderState();
     updateActiveNav();
   });
 })();

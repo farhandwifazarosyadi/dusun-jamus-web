@@ -37,9 +37,15 @@
 }
 
 html {
-  scroll-behavior: auto;
+  scroll-behavior: smooth;
   width: 100%;
   overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 section {
@@ -69,10 +75,6 @@ body {
 }
 
 main {
-  padding-top: 0;
-}
-
-body.page-home.nav-hidden {
   padding-top: 0;
 }
 
