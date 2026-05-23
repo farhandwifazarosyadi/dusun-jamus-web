@@ -10,14 +10,6 @@
   scroll-margin-top: var(--navbar-height, 72px);
 }
 
-body {
-  padding-top: 0;
-}
-
-body.navbar-sticky {
-  padding-top: var(--navbar-height, 72px);
-}
-
 .section-title {
   font-size: 2rem;
   margin-bottom: var(--space-2);
@@ -90,6 +82,11 @@ body.navbar-sticky {
   background-color: var(--color-primary);
 }
 
+.navbar-spacer {
+  height: 0;
+  pointer-events: none;
+}
+
 .header-inner {
   display: flex;
   align-items: center;
@@ -97,10 +94,6 @@ body.navbar-sticky {
   gap: var(--space-3);
   padding: var(--navbar-padding) 0;
   transition: padding 0.25s ease;
-}
-
-.site-header.is-sticky .header-inner {
-  padding: var(--navbar-padding-sticky) 0;
 }
 
 .brand {

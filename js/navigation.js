@@ -26,17 +26,26 @@
       : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
-  function getHeader() {
+  function getNavbarElement() {
     return document.querySelector(".site-header") || document.querySelector(".navbar");
   }
 
-  function getStickyTriggerSection() {
-    return document.querySelector("#tentang-dusun") || document.querySelector("#tentang-desa");
+  function ensureNavbarSpacer(navbar) {
+    var spacer = document.querySelector(".navbar-spacer");
+
+    if (!spacer && navbar && navbar.parentNode) {
+      spacer = document.createElement("div");
+      spacer.className = "navbar-spacer";
+      spacer.setAttribute("aria-hidden", "true");
+      navbar.parentNode.insertBefore(spacer, navbar.nextSibling);
+    }
+
+    return spacer;
   }
 
   function getCurrentNavbarHeight() {
-    var header = getHeader();
-    return header ? header.offsetHeight : 72;
+    var navbar = getNavbarElement();
+    return navbar ? navbar.offsetHeight : 72;
   }
 
   function smoothScrollToTarget(target, duration) {
@@ -65,38 +74,53 @@
     requestAnimationFrame(step);
   }
 
-  var stickyTriggerY = 0;
+  var navbarInitialTop = 0;
+  var navbarHeight = 0;
   var navbarIsSticky = false;
   var ticking = false;
 
-  function calculateStickyTrigger() {
-    var trigger = getStickyTriggerSection();
-    if (!trigger) {
-      stickyTriggerY = 0;
+  function calculateNavbarStickyPoint() {
+    var navbar = getNavbarElement();
+    if (!navbar) {
+      navbarInitialTop = 0;
       return;
     }
-    stickyTriggerY = trigger.offsetTop;
+
+    var wasSticky = navbar.classList.contains("is-sticky");
+    navbar.classList.remove("is-sticky");
+
+    var rect = navbar.getBoundingClientRect();
+    navbarInitialTop = rect.top + window.scrollY;
+    navbarHeight = navbar.offsetHeight;
+
+    if (wasSticky) {
+      navbar.classList.add("is-sticky");
+    }
+
+    var spacer = ensureNavbarSpacer(navbar);
+    if (spacer) {
+      spacer.style.height = navbarIsSticky ? navbarHeight + "px" : "0px";
+    }
   }
 
   function updateNavbarSticky() {
-    var header = getHeader();
-    if (!header || !stickyTriggerY) {
+    var navbar = getNavbarElement();
+    if (!navbar || !navbarInitialTop) {
       return;
     }
 
-    var shouldStick = window.scrollY >= stickyTriggerY - 1;
+    var shouldStick = window.scrollY >= navbarInitialTop;
     if (shouldStick === navbarIsSticky) {
       return;
     }
 
     navbarIsSticky = shouldStick;
-    if (navbarIsSticky) {
-      document.body.style.paddingTop = header.offsetHeight + "px";
-    } else {
-      document.body.style.paddingTop = "";
+    navbar.classList.toggle("is-sticky", navbarIsSticky);
+
+    var spacer = ensureNavbarSpacer(navbar);
+    if (spacer) {
+      spacer.style.height = navbarIsSticky ? navbarHeight + "px" : "0px";
     }
-    header.classList.toggle("is-sticky", navbarIsSticky);
-    document.body.classList.toggle("navbar-sticky", navbarIsSticky);
   }
 
   function onScroll() {
@@ -217,21 +241,26 @@
     });
   }
 
-  function setupStickyTrigger(header) {
-    if (!header || !isHomePath(window.location.pathname)) {
+  function setupStickyTrigger(navbar) {
+    if (!navbar || !isHomePath(window.location.pathname)) {
       return;
     }
 
-    calculateStickyTrigger();
+    if (window.__navbarStickyBound) {
+      return;
+    }
+    window.__navbarStickyBound = true;
+
+    calculateNavbarStickyPoint();
     updateNavbarSticky();
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", function () {
-      calculateStickyTrigger();
+      calculateNavbarStickyPoint();
       updateNavbarSticky();
     });
     window.addEventListener("load", function () {
-      calculateStickyTrigger();
+      calculateNavbarStickyPoint();
       updateNavbarSticky();
     });
   }
@@ -241,7 +270,7 @@
       var toggle = document.querySelector("[data-nav-toggle]");
       var menu = document.querySelector("[data-nav-menu]");
       var links = toArray(document.querySelectorAll("[data-nav-link]"));
-      var header = getHeader();
+      var navbar = getNavbarElement();
 
       if (toggle && menu) {
         toggle.addEventListener("click", function () {
@@ -287,7 +316,7 @@
 
       updateActiveState(links);
       setupScrollSpy(links);
-      setupStickyTrigger(header);
+      setupStickyTrigger(navbar);
     }
   };
 })(window.DusunJamus = window.DusunJamus || {});
