@@ -156,8 +156,24 @@
     }
 
     updateSticky();
-    window.addEventListener("scroll", updateSticky, { passive: true });
-    window.addEventListener("resize", updateSticky);
+    var ticking = false;
+    window.addEventListener(
+      "scroll",
+      function () {
+        if (!ticking) {
+          requestAnimationFrame(function () {
+            updateSticky();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener("resize", function () {
+      // handle resize immediately to recalc trigger
+      updateSticky();
+    });
   }
 
   app.navigation = {

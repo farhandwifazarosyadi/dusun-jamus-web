@@ -126,3 +126,11 @@ h3 {
     --navbar-height: 64px;
   }
 }
+
+/* Ensure anchored sections are offset below the navbar */
+#tentang-desa,
+#galeri-desa,
+#umkm,
+#kontak {
+  scroll-margin-top: var(--navbar-height, 72px);
+}
