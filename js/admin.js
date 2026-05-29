@@ -39,6 +39,9 @@
     if (message.indexOf("schema cache") !== -1) {
       return "Data Karang Taruna belum dapat dimuat. Pastikan tabel sudah dibuat dan schema Supabase sudah reload.";
     }
+    if (message.indexOf("row-level security") !== -1 || message.indexOf("violates row-level security policy") !== -1) {
+      return String(errorMessage) + " Tambahkan policy Supabase untuk admin aktif di tabel terkait (lihat SQL di README.md).";
+    }
     return String(errorMessage);
   }
 
