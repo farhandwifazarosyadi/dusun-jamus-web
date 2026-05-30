@@ -136,7 +136,7 @@
       }
 
       try {
-        var response = await app.supabase.getActiveGalleryItems(9);
+        var response = await app.supabase.getAllActiveGalleryItems();
         if (!response || response.error) {
           console.warn("Galeri dusun belum tersedia.", response ? response.error : "");
           renderFallback(track, fallback);
