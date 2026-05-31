@@ -171,9 +171,25 @@
                   <label>Platform</label>
                   <input name="platform" type="text" required />
                 </div>
+                <div class="admin-field">
+                  <label>Label</label>
+                  <input name="label" type="text" />
+                </div>
                 <div class="admin-field admin-field-full">
                   <label>URL</label>
                   <input name="url" type="url" placeholder="https://" />
+                </div>
+                <div class="admin-field">
+                  <label>Icon Name</label>
+                  <input name="icon_name" type="text" />
+                </div>
+                <div class="admin-field">
+                  <label>Sort Order</label>
+                  <input name="sort_order" type="number" min="0" />
+                </div>
+                <div class="admin-field">
+                  <label>Aktif</label>
+                  <input name="is_active" type="checkbox" checked />
                 </div>
               </div>
               <div class="admin-actions">
@@ -187,7 +203,9 @@
                 <thead>
                   <tr>
                     <th>Platform</th>
+                    <th>Label</th>
                     <th>URL</th>
+                    <th>Aktif</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
