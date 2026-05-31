@@ -471,12 +471,9 @@
     state.socialLinks = response.data || [];
     if (list) {
       list.innerHTML = state.socialLinks.map(function (item) {
-        var activeLabel = item.is_active ? "Ya" : "Tidak";
         return "<tr>" +
           "<td>" + (item.platform || "-") + "</td>" +
-          "<td>" + (item.label || "-") + "</td>" +
           "<td>" + (item.url || "-") + "</td>" +
-          "<td>" + activeLabel + "</td>" +
           "<td>" +
             "<button class=\"admin-link\" data-contact-social-edit=\"" + item.id + "\">Edit</button>" +
             "<button class=\"admin-link danger\" data-contact-social-delete=\"" + item.id + "\">Hapus</button>" +
@@ -526,7 +523,6 @@
     if (socialReset && socialForm) {
       socialReset.addEventListener("click", function () {
         resetForm(socialForm);
-        setCheckboxValue(socialForm, "is_active", true);
       });
     }
 
@@ -541,11 +537,7 @@
         var editId = socialForm.dataset.editId;
         var payload = {
           platform: getInputValue(socialForm, "platform"),
-          label: getInputValue(socialForm, "label"),
-          url: getInputValue(socialForm, "url"),
-          icon_name: getInputValue(socialForm, "icon_name"),
-          sort_order: parseInt(getInputValue(socialForm, "sort_order"), 10),
-          is_active: getCheckboxValue(socialForm, "is_active")
+          url: getInputValue(socialForm, "url")
         };
 
         setStatus(socialStatus, "Menyimpan media sosial...", false);
@@ -558,7 +550,6 @@
         }
 
         resetForm(socialForm);
-        setCheckboxValue(socialForm, "is_active", true);
         setStatus(socialStatus, "Media sosial tersimpan.", false);
         await loadSocialLinks();
       });
@@ -593,11 +584,7 @@
         }
         socialForm.dataset.editId = item.id;
         setInputValue(socialForm, "platform", item.platform);
-        setInputValue(socialForm, "label", item.label);
         setInputValue(socialForm, "url", item.url);
-        setInputValue(socialForm, "icon_name", item.icon_name);
-        setInputValue(socialForm, "sort_order", item.sort_order);
-        setCheckboxValue(socialForm, "is_active", item.is_active === true);
         setStatus(socialStatus, "", false);
       });
     }
