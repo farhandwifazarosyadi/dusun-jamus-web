@@ -473,7 +473,7 @@
       list.innerHTML = state.socialLinks.map(function (item) {
         return "<tr>" +
           "<td>" + (item.platform || "-") + "</td>" +
-          "<td>" + (item.label || "-") + "</td>" +
+          "<td>" + (item.url || "-") + "</td>" +
           "<td>" +
             "<button class=\"admin-link\" data-contact-social-edit=\"" + item.id + "\">Edit</button>" +
             "<button class=\"admin-link danger\" data-contact-social-delete=\"" + item.id + "\">Hapus</button>" +
@@ -537,7 +537,7 @@
         var editId = socialForm.dataset.editId;
         var payload = {
           platform: getInputValue(socialForm, "platform"),
-          label: getInputValue(socialForm, "label")
+          url: getInputValue(socialForm, "url")
         };
 
         setStatus(socialStatus, "Menyimpan media sosial...", false);
@@ -584,7 +584,7 @@
         }
         socialForm.dataset.editId = item.id;
         setInputValue(socialForm, "platform", item.platform);
-        setInputValue(socialForm, "label", item.label);
+        setInputValue(socialForm, "url", item.url);
         setStatus(socialStatus, "", false);
       });
     }

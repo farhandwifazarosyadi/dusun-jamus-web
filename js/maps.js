@@ -107,8 +107,12 @@
     }
     items.forEach(function (item) {
       var li = document.createElement("li");
-      var text = (item.platform ? item.platform + ': ' : '') + (item.label || item.platform || 'Social');
-      li.textContent = text;
+      var link = document.createElement("a");
+      link.href = item.url || "#";
+      link.textContent = item.label || "Social";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      li.appendChild(link);
       list.appendChild(li);
     });
   }
