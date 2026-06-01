@@ -262,9 +262,7 @@
       return;
     }
 
-    if (tab === "landing") {
-      await loadLandingItems();
-    } else if (tab === "about") {
+    if (tab === "about") {
       await loadAboutProfile();
     } else if (tab === "contact") {
       await loadContactInfo();
@@ -344,7 +342,6 @@
     }
 
     bindAdminTabs();
-    bindLandingModule();
     bindAboutModule();
     bindContactModule();
     bindGalleryModule();
