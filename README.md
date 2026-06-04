@@ -2,7 +2,7 @@
 
 ## Admin dashboard (internal)
 
-Halaman admin ada di `pages/admin.html` dan memakai Supabase Auth + RLS admin untuk mengelola:
+Halaman admin ada di `pages/admin.html` dan memakai Supabase Auth + RLS admin untuk mengelola :
 
 - Landing (tabel `hero_slides`: `title`, `image_url`)
 - Galeri Desa (tabel `gallery_items`: `title`, `image_url`)
